@@ -1,8 +1,9 @@
 import math
 import numpy as np
+import PIL
+from PIL import Image
 
 def get_angular_image(image_array,angle_list,led_strips,strip_led_count_list,strip_offset_angle_list):
-  #angular_image_array = np.zeros(([led_strips,len(angle_list),math.max(strip_led_count_list),3]))
   angular_image=[]
   for strip_index in xrange(0,led_strips):
     strip_list=[]
@@ -23,12 +24,11 @@ def get_angular_image(image_array,angle_list,led_strips,strip_led_count_list,str
         y2 = floor(y)
         y1 = y2+1
         #get four closest pixels and bilaterally interpolate
-        p11=get_pixel(x1,y1)
-        p21=get_pixel(x2,y1)
-        p12=get_pixel(x1,y2)
-        p22=get_pixel(x2,y2)
+        p11=image_array[x1][y1]
+        p21=image_array[x2][y1]
+        p12=image_array[x1][y2]
+        p22=image_array[x2][y2]
         p=(y-y2)*(x-x1)*p21+(x2-x)*(y-y2)*p11+(y1-y)*(x-x1)*p22+(x2-x)*(y1-y)*p12
-        
         alpha=p[3]/255.
         pixel_list.append([p[0]*alpha,p[1]*alpha,p[2]*alpha])
       strip_list.append(strip_list)
@@ -68,7 +68,6 @@ def get_theta(sensor_data):
   prev_ts=ts
   y_prev_dir=y_dir
   return theta
-
   
 def get_pixel_colors(angular_image, theta, sensor_data):
   angular_pixel_delay = 0.00003 * sensor_data[2]
@@ -81,13 +80,22 @@ def get_pixel_colors(angular_image, theta, sensor_data):
       single_strip.append(pixel_color)
     pixel_colors.append(single_strip)
   return pixel_colors
+
+def getImageArray(image_file, width, height):
+		im = Image.open(image_file).convert('RGBA')
+		background = Image.new('RGBA',im.size,(0,0,0))
+		alpha_composite = Image.alpha_composite(background,im)
+		alpha_composite.thumbnail([height,width],Image.ANTIALIAS)
+		alpha_composite.save('thumb.png')
+		arr=np.array(alpha_composite)
+		return arr
   
 def main:
   angle_list = xrange(0,360,1)
   led_strips = 2
   strip_led_count_list=[144,143]
   strip_offset_angle_list = [0,90]
-  image_array #thumbnail image, pad/center to square array of dimension max of strip_led_count_list
+  image_array = getImageArray(pic.png, 144, 144) #thumbnail image, pad/center to square array of dimension max of strip_led_count_list
   angular_image = get_angular_image(image_array,angle_list,led_strips,led_strip_angle_list)
   while True:
     sensor_data = get_sensor_data()
