@@ -2,6 +2,23 @@ import math
 import numpy as np
 import PIL
 from PIL import Image
+from multiprocessing import Process
+from neopixel import *
+
+# LED strip configuration:
+LED_COUNT_1      = 144      # Number of LED pixels.
+LED_PIN_1        = 10      # GPIO pin connected to the pixels (18 uses PWM!).
+LED_DMA_1        = 5       # DMA channel to use for generating signal (try 5)
+
+LED_COUNT_2      = 144      # Number of LED pixels.
+LED_PIN_2        = 21      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
+LED_DMA_2       = 6       # DMA channel to use for generating signal (try 5)
+
+LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
+LED_BRIGHTNESS = 16     # Set to 0 for darkest and 255 for brightest
+LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
+LED_CHANNEL    = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
+LED_STRIP      = ws.WS2811_STRIP_RGB   # Strip type and colour ordering
 
 #takes image file and produces array of RGBA pixel values for black padded, alpha blended image of correct size
 def getImageArray(image_file, width, height):
@@ -108,26 +125,35 @@ def turn_off_leds(led_strips, strip_led_count_list):
 		led_strips[strip_index].setPixelColor(led_index, Color(0,0,0))
 	led_strips[strip_index].show()
 	
-def update_strips(led_strips, pixel_colors):
-  for strip_index in xrange(len(led_strips)):
-	for led_index in xrange(strip_led_count_list[strip_index]):
-		color=pixel_colors[strip_index][led_index]
-		led_strips[strip_index].setPixelColor(led_index, Color(color[0],color[1],color[2]))
-  for strip in led_strips:
-	strip.show()
+def update_strip(strip, pixel_colors):
+  for led_index in xrange(len(pixel_colors)):
+	color=pixel_colors[led_index]
+	strip.setPixelColor(led_index, Color(color[0],color[1],color[2]))
+  strip.show()
   
 def main:
-  angle_list = xrange(0,360,1)
+  strip1 = Adafruit_NeoPixel(LED_COUNT_1, LED_PIN_1, LED_FREQ_HZ, LED_DMA_1, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
+  strip2 = Adafruit_NeoPixel(LED_COUNT_2, LED_PIN_2, LED_FREQ_HZ, LED_DMA_2, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
+  strip1.begin()
+  strip2.begin()
   led_strips = [strip1,strip2]
-  strip_led_count_list=[144,144]
+  angle_list = xrange(0,360,1)
+  strip_led_count_list=[LED_COUNT_1,LED_COUNT_2]
   strip_offset_angle_list = [0,90]
-  image_array = getImageArray(pic.png, 144, 144) #thumbnail image, pad/center to square array of dimension max of strip_led_count_list
+  image_array = getImageArray(pic.png, LED_COUNT_1, LED_COUNT_1)
   angular_image = get_angular_image(image_array,angle_list,led_strip_angle_list)
+  print ('Press Ctrl-C to quit.')
   while True:
     sensor_data = get_sensor_data()
     if sensor_data[1]>90: #spinning fast enough
       theta = get_theta(sensor_data)
       pixel_colors = get_pixel_colors(angular_image, theta, sensor_data)
-      update_strips(pixel_colors)
+      processes=[]
+      for strip_index in len(led_strips):
+	new_process=Process(target=update_strips,args=(led_strips[strip_index],pixel_colors[strip_index],))
+	processes.append(new_process)
+	new_process.start()
+      for process in processes:
+	process.join()
     else:
       turn_off_leds(led_strips, strip_led_count_list)
