@@ -21,9 +21,9 @@ def getImageArray(image_file, width, height):
 
 #takes image pixel array and parameters describing physical LED strip configuration, 
 #produces a precalculated array for each strip at each angle
-def get_angular_image(image_array,angle_list,led_strips,strip_led_count_list,strip_offset_angle_list):
+def get_angular_image(image_array,angle_list,strip_led_count_list,strip_offset_angle_list):
   angular_image=[]
-  for strip_index in xrange(0,led_strips):
+  for strip_index in xrange(0,len(strip_led_count)):
     strip_list=[]
     for theta in angle_list:
       cos_t = math.cos(theta*math.pi/180.+strip_offset_angle_list[strip_index])
@@ -103,17 +103,26 @@ def get_pixel_colors(angular_image, theta, sensor_data):
   return pixel_colors
 
 def turn_off_leds(led_strips, strip_led_count_list):
-  for strip_index in xrange(number_of_strips):
+  for strip_index in xrange(len(led_strips)):
 	for led_index in xrange(strip_led_count_list[strip_index]):
-		#turn off pixel
+		led_strips[strip_index].setPixelColor(led_index, Color(0,0,0))
+	led_strips[strip_index].show()
+	
+def update_strips(led_strips, pixel_colors):
+  for strip_index in xrange(len(led_strips)):
+	for led_index in xrange(strip_led_count_list[strip_index]):
+		color=pixel_colors[strip_index][led_index]
+		led_strips[strip_index].setPixelColor(led_index, Color(color[0],color[1],color[2]))
+  for strip in led_strips:
+	strip.show()
   
 def main:
   angle_list = xrange(0,360,1)
-  led_strips = 2
-  strip_led_count_list=[144,143]
+  led_strips = [strip1,strip2]
+  strip_led_count_list=[144,144]
   strip_offset_angle_list = [0,90]
   image_array = getImageArray(pic.png, 144, 144) #thumbnail image, pad/center to square array of dimension max of strip_led_count_list
-  angular_image = get_angular_image(image_array,angle_list,led_strips,led_strip_angle_list)
+  angular_image = get_angular_image(image_array,angle_list,led_strip_angle_list)
   while True:
     sensor_data = get_sensor_data()
     if sensor_data[1]>90: #spinning fast enough
