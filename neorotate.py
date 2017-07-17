@@ -131,7 +131,7 @@ def update_strip(strip, pixel_colors):
 	strip.setPixelColor(led_index, Color(color[0],color[1],color[2]))
   strip.show()
   
-def main:
+if __name__ == '__main__':
   strip1 = Adafruit_NeoPixel(LED_COUNT_1, LED_PIN_1, LED_FREQ_HZ, LED_DMA_1, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
   strip2 = Adafruit_NeoPixel(LED_COUNT_2, LED_PIN_2, LED_FREQ_HZ, LED_DMA_2, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
   strip1.begin()
