@@ -3,6 +3,24 @@ import numpy as np
 import PIL
 from PIL import Image
 
+#takes image file and produces array of RGBA pixel values for black padded, alpha blended image of correct size
+def getImageArray(image_file, width, height):
+	im = Image.open(image_file).convert('RGBA')
+	thumb = im.thumbnail([height,width],Image.ANTIALIAS)
+	padded_thumb = Image.new('RGBA',(width, height), (0, 0, 0))
+	paste_x_offset = width-(thumb.width)//2
+	paste_y_offset = height-(thumb.height)//2
+	paste_region = (paste_x_offset,paste_y_offset,paste_x_offset+thumb.width-1, \
+			paste_y_offset+thumb.height-1)
+	padded_thumb.paste(thumb, paste_region)
+	background = Image.new('RGBA',[height,width],(0,0,0))
+	alpha_composite = Image.alpha_composite(background,padded_thumb)
+	alpha_composite.save('thumb.png')
+	arr=np.array(alpha_composite)
+	return arr
+
+#takes image pixel array and parameters describing physical LED strip configuration, 
+#produces a precalculated array for each strip at each angle
 def get_angular_image(image_array,angle_list,led_strips,strip_led_count_list,strip_offset_angle_list):
   angular_image=[]
   for strip_index in xrange(0,led_strips):
@@ -41,6 +59,7 @@ def get_sensor_data():
   gyro_z=0
   return [ts,accel_y,gyro_z]
   
+'''uses sensor data to determine exact angular position of the spinner'''
 a=0 #speed dependent angular offset
 b=0 #speed independent angualr offset
 noise_threshold=10 #accel count delta to trigger direction change
@@ -69,6 +88,8 @@ def get_theta(sensor_data):
   y_prev_dir=y_dir
   return theta
   
+#returns lists for pixel colors for each LED in each strip based on the angular position of the LED
+#at the time it receives its color command
 def get_pixel_colors(angular_image, theta, sensor_data):
   angular_pixel_delay = 0.00003 * sensor_data[2]
   pixel_colors=[]
@@ -81,20 +102,10 @@ def get_pixel_colors(angular_image, theta, sensor_data):
     pixel_colors.append(single_strip)
   return pixel_colors
 
-def getImageArray(image_file, width, height):
-		im = Image.open(image_file).convert('RGBA')
-		thumb = im.thumbnail([height,width],Image.ANTIALIAS)
-		padded_thumb = Image.new('RGBA',(width, height), (0, 0, 0))
-		paste_x_offset = width-(thumb.width)//2
-		paste_y_offset = height-(thumb.height)//2
-		paste_region = (paste_x_offset,paste_y_offset,paste_x_offset+thumb.width-1, \
-				paste_y_offset+thumb.height-1)
-		padded_thumb.paste(thumb, paste_region)
-		background = Image.new('RGBA',[height,width],(0,0,0))
-		alpha_composite = Image.alpha_composite(background,padded_thumb)
-		alpha_composite.save('thumb.png')
-		arr=np.array(alpha_composite)
-		return arr
+def turn_off_leds(led_strips, strip_led_count_list):
+  for strip_index in xrange(number_of_strips):
+	for led_index in xrange(strip_led_count_list[strip_index]):
+		#turn off pixel
   
 def main:
   angle_list = xrange(0,360,1)
@@ -109,4 +120,5 @@ def main:
       theta = get_theta(sensor_data)
       pixel_colors = get_pixel_colors(angular_image, theta, sensor_data)
       update_strips(pixel_colors)
-      #else make black
+    else:
+      turn_off_leds(led_strips, strip_led_count_list)
