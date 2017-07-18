@@ -5,7 +5,8 @@
 # various animations on a strip of NeoPixels.
 import time
 from multiprocessing import Process
-
+import sys
+sys.path.append('/user/pi/neopixel/rpi_ws281x/python')
 from neopixel import *
 
 
