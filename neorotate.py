@@ -22,8 +22,8 @@ def getImageArray(image_file, width, height):
 	im.thumbnail([height,width],Image.ANTIALIAS)
 	im_width, im_height = im.size
 	padded_thumb = Image.new('RGBA',(width, height), (0, 0, 0))
-	paste_x_offset = width-(im_width)//2
-	paste_y_offset = height-(im_height)//2
+	paste_x_offset = (width-(im_width))//2
+	paste_y_offset = (height-(im_height))//2
 	paste_region = (paste_x_offset,paste_y_offset,paste_x_offset+im_width-1, \
 			paste_y_offset+im_height-1)
 	print (im.size)
