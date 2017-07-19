@@ -1,6 +1,7 @@
 import smbus
 
 I2C_BUS = 1
+bus = smbus.SMBus(I2C_BUS)
 I2C_ADDRESS = 0x69
 GYRO_Z_OFFSET_REG = 0x18
 CONFIG_REG = 0x1A
@@ -26,28 +27,27 @@ USER_CONTROL = 0x00 # Disables FIFO Access
 PWR_MAN1_REG = 0x6B
 PWR_MAN1 = 0x01 # Use PLL as CLK Input
 PWR_MAN2_REG = 0x6C
-PWR_Man2 = 0x00 # All sensor channels on
+PWR_MAN2 = 0x00 # All sensor channels on
 WHOAMI_REG = 0x75
 WHOIAM = 0xAC
 SENSOR_OUT_14_BYTE_REG = 0x3B #AXH, AXL, AYH, AYL, AZH, AZL, TH, TL, GXH, GXL, GYH, GYL, GZH, GZL
 TEMP_SCALE = 1 / 326.8
 
 def write(address, data):
-     with smbus.SMBus(I2C_BUS) as bus:
-          bus.write_byte_data(I2C_ADDRESS, address, data)
+     bus.write_byte_data(I2C_ADDRESS, address, data)
      
 def read(address):
-     with smbus.SMBus(I2C_BUS) as bus:
-          return bus.read_byte_data(I2C_ADDRESS, address)
+     byte = bus.read_byte_data(I2C_ADDRESS, address)
+     print(byte)
+     return byte
      
 def read_bytes(address, count):
-     with smbus.SMBus(I2C_BUS) as bus:
-          return bus.read_i2c_block_data(I2C_ADDRESS, address, count)
+     return bus.read_i2c_block_data(I2C_ADDRESS, address, count)
      
 def init_registers():
      write(CONFIG_REG, CONFIG)
      write(GYRO_CONFIG_REG, GYRO_CONFIG)
-     write(ACCEL_CONFIG1_REG, ACCEL_CONFIG1)
+     write(ACCEL_CONFIG_REG, ACCEL_CONFIG)
      write(ACCEL_CONFIG2_REG, ACCEL_CONFIG2)
      write(LP_MODE_CONFIG_REG, LP_MODE_CONFIG)
      write(FIFO_ENABLE_REG, FIFO_ENABLE)
@@ -66,6 +66,9 @@ def get_sensor_data():
      accel_data.append(accel_data_counts[0] * ACCEL_SCALE)
      accel_data.append(accel_data_counts[1] * ACCEL_SCALE)
      accel_data.append(accel_data_counts[2] * ACCEL_SCALE)
+     for i in xrange(len(accel_data)):
+          if accel_data[i]>ACCEL_RANGE/2:
+               accel_data[i] -= ACCEL_RANGE
      temp_data_counts=(data[6]<<8)|data[7]
      temp_data=temp_data_counts * TEMP_SCALE
      gyro_data_counts=[(data[8]<<8)|data[9],(data[10]<<8)|data[11],(data[12]<<8)|data[13]]
@@ -73,6 +76,9 @@ def get_sensor_data():
      gyro_data.append(gyro_data_counts[0] * GYRO_SCALE)
      gyro_data.append(gyro_data_counts[1] * GYRO_SCALE)
      gyro_data.append(gyro_data_counts[2] * GYRO_SCALE)
+     for i in xrange(len(gyro_data)):
+          if gyro_data[i] > GYRO_RANGE/2:
+               gyro_data[i] -= GYRO_RANGE
      print(str(accel_data)+','+str(temp_data)+','+str(gyro_data))
      return accel_data, gyro_data, temp_data
      
