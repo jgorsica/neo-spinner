@@ -138,7 +138,7 @@ if __name__ == '__main__':
   led_strips = [strip1,strip2]
   angle_list = xrange(0,360,1)
   strip_led_count_list=[LED_COUNT_1,LED_COUNT_2]
-  image_array = getImageArray(pic.png, LED_COUNT_1, LED_COUNT_1)
+  image_array = getImageArray('colors.png', LED_COUNT_1, LED_COUNT_1)
   angular_image = get_angular_image(image_array,angle_list,led_strips)
   print ('Press Ctrl-C to quit.')
   while True:
