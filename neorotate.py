@@ -34,17 +34,16 @@ def getImageArray(image_file, width, height):
 
 #takes image pixel array and parameters describing physical LED strip configuration, 
 #produces a precalculated array for each strip at each angle
-def get_angular_image(image_array,angle_list,strip_led_count_list,strip_offset_angle_list):
+def get_angular_image(image_array,angle_list,led_strips):
   angular_image=[]
-  for strip_index in xrange(0,len(strip_led_count)):
+  for strip in led_strips:
     strip_list=[]
     for theta in angle_list:
-      cos_t = math.cos(theta*math.pi/180.+strip_offset_angle_list[strip_index])
-      sin_t = math.sin(theta*math.pi/180.+strip_offset_angle_list[strip_index])
+      cos_t = math.cos(theta*math.pi/180.+strip.theta())
+      sin_t = math.sin(theta*math.pi/180.+strip.theta())
       pixel_list=[]
-      for led_index in xrange(strip_led_count_list[strip_index]):
-        radius = (strip_led_count_list[strip_index]-1/2.)
-        led_radius = led_index - radius
+      for led_index in xrange(strip.count()):
+        led_radius = strip.radius_list()[led_index]
         x_r = led_radius * sin_t
         y_r = led_radius * cos_t
         #change is image coordinate system
@@ -115,9 +114,9 @@ def get_pixel_colors(angular_image, theta, sensor_data):
     pixel_colors.append(single_strip)
   return pixel_colors
 
-def turn_off_leds(led_strips, strip_led_count_list):
+def turn_off_leds(led_strips):
   for strip_index in xrange(len(led_strips)):
-	for led_index in xrange(strip_led_count_list[strip_index]):
+	for led_index in xrange(strip_led_count_list[strip_index].count()):
 		led_strips[strip_index].setPixelColor(led_index, Color(0,0,0))
 	led_strips[strip_index].show()
 	
@@ -128,6 +127,8 @@ def update_strip(strip, pixel_colors):
   strip.show()
   
 if __name__ == '__main__':
+  radius = ((strip.count()-1)/2.)
+  led_radius = led_index - radius
   strip1 = LED_strand(LED_COUNT_1, LED_PIN_1, LED_DMA_1, LED_ANGLE_1, radius_list)
   strip2 = LED_strand(LED_COUNT_2, LED_PIN_2, LED_DMA_2, LED_ANGLE_2, radius_list)
   strip1.begin()
@@ -136,7 +137,7 @@ if __name__ == '__main__':
   angle_list = xrange(0,360,1)
   strip_led_count_list=[LED_COUNT_1,LED_COUNT_2]
   image_array = getImageArray(pic.png, LED_COUNT_1, LED_COUNT_1)
-  angular_image = get_angular_image(image_array,angle_list,led_strip_angle_list)
+  angular_image = get_angular_image(image_array,angle_list,led_strips)
   print ('Press Ctrl-C to quit.')
   while True:
     sensor_data = get_sensor_data()
@@ -151,4 +152,4 @@ if __name__ == '__main__':
       for process in processes:
 	process.join()
     else:
-      turn_off_leds(led_strips, strip_led_count_list)
+      turn_off_leds(led_strips)
