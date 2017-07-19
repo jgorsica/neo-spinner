@@ -137,6 +137,8 @@ def get_pixel_colors(angular_image, theta, sensor_data):
     single_strip=[]
     for led_index in xrange(len(angular_image[strip_index][0])):
       pixel_theta = int(theta + led_index * angular_pixel_delay)
+      while pixel_theta >= 360:
+        pixel_theta -= 360
       pixel_color = angular_image[strip_index][pixel_theta][led_index]
       single_strip.append(pixel_color)
     pixel_colors.append(single_strip)
@@ -174,8 +176,9 @@ if __name__ == '__main__':
     sensor_data[2]=100
     if sensor_data[2]>90: #spinning fast enough
       theta = get_theta(sensor_data)
+      print(theta)
       pixel_colors = get_pixel_colors(angular_image, theta, sensor_data)
-      print(pixel_colors)
+      #print(pixel_colors)
       processes=[]
       for strip_index in xrange(len(led_strips)):
 	new_process=Process(target=update_strip,args=(led_strips[strip_index],pixel_colors[strip_index],))
