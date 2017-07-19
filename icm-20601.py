@@ -1,4 +1,5 @@
 import smbus
+import time
 
 class ICM-20601(object):
      GYRO_Z_OFFSET_REG = 0x18
@@ -68,6 +69,7 @@ class ICM-20601(object):
           return self.WHOIAM == self.read(self.WHOAMI_REG)
      
      def get_sensor_data(self):
+          timestamp=time.time()
           data=self.read_bytes(self.SENSOR_OUT_14_BYTE_REG, 14)
           accel_data_counts=[(data[0]<<8)|data[1],(data[2]<<8)|data[3],(data[4]<<8)|data[5]]
           accel_data=[]
@@ -88,4 +90,4 @@ class ICM-20601(object):
                if gyro_data[i] > self.GYRO_RANGE/2:
                     gyro_data[i] -= self.GYRO_RANGE
           print(str(accel_data)+','+str(temp_data)+','+str(gyro_data))
-          return accel_data, gyro_data, temp_data
+          return timestamp, accel_data, gyro_data, temp_data
