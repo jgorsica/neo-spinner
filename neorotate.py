@@ -180,11 +180,14 @@ if __name__ == '__main__':
     #print('getting sensor data')
     time1=time.time()
     sensor_data = get_sensor_data(sensor)
-    time2=time.time()
-    print(time2-time1)
+    #time2=time.time()
+    #print(time2-time1)
     sensor_data[2]=100
     if sensor_data[2]>90: #spinning fast enough
+      time3=time.time()
       theta = get_theta(sensor_data)
+      time4=time.time()
+      print(time4-time3)
       #print(theta)
       #pixel_colors = get_pixel_colors(angular_image, theta, sensor_data)
       #pixel_colors = angular_image[:,theta,:]
