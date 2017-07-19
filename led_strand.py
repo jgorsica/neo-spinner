@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/user/pi/rpi_ws281x/python') # check path to neopixel library location
+sys.path.append('/home/pi/rpi_ws281x/python') # check path to neopixel library location
 from neopixel import *
 
 class LED_strand(object):
