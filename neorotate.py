@@ -109,6 +109,8 @@ def get_theta(sensor_data):
   v=sensor_data[2] # rotational velocity dps
   y=sensor_data[1] # accel_y in integer counts
   ts=sensor_data[0]
+  if (ts-prev_ts) > 5:
+    prev_ts = ts
   theta = prev_theta + v*(ts-prev_ts)
   while theta>=360:
     theta -= 360
