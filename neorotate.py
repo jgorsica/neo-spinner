@@ -107,7 +107,7 @@ def get_pixel_colors(angular_image, theta, sensor_data):
   pixel_colors=[]
   for strip_index in xrange(len(angular_image)):
     single_strip=[]
-    for led_index in xrange(len(angular_image[strip_index][0]))
+    for led_index in xrange(len(angular_image[strip_index][0])):
       pixel_theta = math.floor(theta + pixel_index * angular_pixel_delay)
       pixel_color = angular_image[strip_index][pixel_theta][led_index]
       single_strip.append(pixel_color)
