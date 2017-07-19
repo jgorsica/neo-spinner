@@ -59,7 +59,7 @@ def get_angular_image(image_array,angle_list,led_strips):
   for strip in led_strips:
     if strip.get_count()>longest_strip_length:
       longest_strip_length = strip.get_count()
-  angular_image=np.zeros((len(led_strips),len(angle_list),longest_strip_length,3), dtype=np.int)
+  angular_image=np.zeros((len(led_strips),len(angle_list),longest_strip_length), dtype=np.int)
   radius = 0
   for strip in led_strips:
     candidate = max([abs(x) for x in strip.get_radius_list()])
@@ -91,9 +91,8 @@ def get_angular_image(image_array,angle_list,led_strips):
         p22=image_array[x2,y2]
         p=(y-y2)*(x-x1)*p21+(x2-x)*(y-y2)*p11+(y1-y)*(x-x1)*p22+(x2-x)*(y1-y)*p12
         alpha=p[3]/255.
-        angular_image[strip_index,theta,led_index,0]=int(p[0]*alpha)
-	angular_image[strip_index,theta,led_index,1]=int(p[1]*alpha)
-	angular_image[strip_index,theta,led_index,2]=int(p[2]*alpha)
+	color=Color(int(p[0]*alpha),int(p[1]*alpha),int(p[2]*alpha))
+        angular_image[strip_index,theta,led_index]=color
   return angular_image
   
 def get_sensor_data(sensor):
@@ -134,16 +133,14 @@ def get_theta(sensor_data):
 #at the time it receives its color command
 def get_pixel_colors(angular_image, theta, sensor_data):
   angular_pixel_delay = 0.00003 * sensor_data[2]
-  pixel_colors=[]
+  pixel_colors=np.zeros((angular_image.shape[0],angular_image.shape[2]),dtype=np.int)
   for strip_index in xrange(angular_image.shape[0]):
-    single_strip=[]
     for led_index in xrange(angular_image.shape[2]):
       pixel_theta = int(theta + led_index * angular_pixel_delay)
       while pixel_theta >= 360:
         pixel_theta -= 360
       pixel_color = angular_image[strip_index,pixel_theta,led_index]
-      single_strip.append(pixel_color.tolist())
-    pixel_colors.append(single_strip)
+      pixel_colors[strip_index,led_index]=pixel_color
   return pixel_colors
 
 def turn_off_leds(led_strips):
@@ -153,10 +150,9 @@ def turn_off_leds(led_strips):
 	strip.show()
 	time.sleep(2)
 	
-def update_strip(strip, pixel_colors):
+def update_strip(strip, pixel_colors_for_strip):
   for led_index in xrange(strip.get_count()):
-	color=pixel_colors[led_index]
-	strip.setPixelColor(led_index, Color(color[0],color[1],color[2]))
+	strip.setPixelColor(led_index, pixel_colors_for_strip[led_index])
   strip.show()
   
 if __name__ == '__main__':
@@ -195,8 +191,7 @@ if __name__ == '__main__':
       for process in processes:
 	process.join()
       update_count += 1
-      if update_count ==10:
-        print('10 updates')
-	update_count=0
+      if update_count%20 == 0:
+        print(str(update_count) +' updates')
     else:
       turn_off_leds(led_strips)
