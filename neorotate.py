@@ -26,6 +26,9 @@ def getImageArray(image_file, width, height):
 	paste_y_offset = height-(im_height)//2
 	paste_region = (paste_x_offset,paste_y_offset,paste_x_offset+im_width-1, \
 			paste_y_offset+im_height-1)
+	print (im.size)
+	print (paste_region)
+	print (padded_thumb.size)
 	padded_thumb.paste(im, paste_region)
 	background = Image.new('RGBA',[height,width],(0,0,0))
 	alpha_composite = Image.alpha_composite(background,padded_thumb)
