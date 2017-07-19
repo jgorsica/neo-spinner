@@ -26,9 +26,9 @@ def getImageArray(image_file, width, height):
 	paste_y_offset = (height-(im_height))//2
 	paste_region = (paste_x_offset,paste_y_offset,paste_x_offset+im_width-1, \
 			paste_y_offset+im_height-1)
-	print (im.size)
-	print (paste_region)
-	print (padded_thumb.size)
+	#print (im.size)
+	#print (paste_region)
+	#print (padded_thumb.size)
 	padded_thumb.paste(im, (paste_x_offset,paste_y_offset))
 	background = Image.new('RGBA',[height,width],(0,0,0))
 	alpha_composite = Image.alpha_composite(background,padded_thumb)
@@ -71,7 +71,6 @@ def get_angular_image(image_array,angle_list,led_strips):
         p21=np.asarray(image_array[x2][y1])
         p12=np.asarray(image_array[x1][y2])
         p22=np.asarray(image_array[x2][y2])
-	print(p11)
         p=(y-y2)*(x-x1)*p21+(x2-x)*(y-y2)*p11+(y1-y)*(x-x1)*p22+(x2-x)*(y1-y)*p12
         alpha=p[3]/255.
         pixel_list.append([int(p[0]*alpha),int(p[1]*alpha),int(p[2]*alpha)])
