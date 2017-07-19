@@ -92,7 +92,7 @@ def get_angular_image(image_array,angle_list,led_strips):
         pixel_list.append([int(p[0]*alpha),int(p[1]*alpha),int(p[2]*alpha)])
       strip_list.append(pixel_list)
     angular_image.append(strip_list)
-  return angular_image
+  return np.asarray(angular_image)
   
 def get_sensor_data(sensor):
   ts, accel, gyro, _ = sensor.get_sensor_data()
@@ -133,14 +133,14 @@ def get_theta(sensor_data):
 def get_pixel_colors(angular_image, theta, sensor_data):
   angular_pixel_delay = 0.00003 * sensor_data[2]
   pixel_colors=[]
-  for strip_index in xrange(len(angular_image)):
+  for strip_index in xrange(angular_image.shape[0]):
     single_strip=[]
-    for led_index in xrange(len(angular_image[strip_index][0])):
+    for led_index in xrange(angular_image.shape[2]):
       pixel_theta = int(theta + led_index * angular_pixel_delay)
       while pixel_theta >= 360:
         pixel_theta -= 360
-      pixel_color = angular_image[strip_index][pixel_theta][led_index]
-      single_strip.append(pixel_color)
+      pixel_color = angular_image[strip_index,pixel_theta,led_index]
+      single_strip.append(pixel_color.aslist())
     pixel_colors.append(single_strip)
   return pixel_colors
 
