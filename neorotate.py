@@ -67,14 +67,14 @@ def get_angular_image(image_array,angle_list,led_strips):
 	if y1 == len(image_array[0]):
           y1 = y2
         #get four closest pixels and bilaterally interpolate
-        p11=image_array[x1][y1]
-        p21=image_array[x2][y1]
-        p12=image_array[x1][y2]
-        p22=image_array[x2][y2]
+        p11=np.asarray(image_array[x1][y1])
+        p21=np.asarray(image_array[x2][y1])
+        p12=np.asarray(image_array[x1][y2])
+        p22=np.asarray(image_array[x2][y2])
 	print(p11)
         p=(y-y2)*(x-x1)*p21+(x2-x)*(y-y2)*p11+(y1-y)*(x-x1)*p22+(x2-x)*(y1-y)*p12
         alpha=p[3]/255.
-        pixel_list.append([p[0]*alpha,p[1]*alpha,p[2]*alpha])
+        pixel_list.append([int(p[0]*alpha),int(p[1]*alpha),int(p[2]*alpha)])
       strip_list.append(strip_list)
     angular_image.append(angle_list)
   return angular_image
