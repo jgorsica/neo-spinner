@@ -42,7 +42,7 @@ def get_angular_image(image_array,angle_list,led_strips):
   angular_image=[]
   radius = 0
   for strip in led_strips:
-    candidate = math.max([abs(x) for x in strip.get_radius_list()])
+    candidate = max([abs(x) for x in strip.get_radius_list()])
     if candidate > radius:
       radius = candidate
   for strip in led_strips:
