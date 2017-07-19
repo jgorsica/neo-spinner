@@ -35,7 +35,7 @@ class ICM_20601(object):
      def __init__(self,bus_number=1,address=0x69):
           self.bus = smbus.SMBus(bus_number)
           self.i2c_address=address
-          if check_interface():
+          if self.check_interface():
                print('interface working')
           else:
                print('interface not working')
