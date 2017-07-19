@@ -154,13 +154,13 @@ def turn_off_leds(led_strips):
 	time.sleep(2)
 	
 def update_strip(strip, pixel_colors_for_strip):
-  time7 = time.time()
+  #time7 = time.time()
   for led_index in xrange(strip.get_count()):
 	strip.setPixelColor(led_index, pixel_colors_for_strip[led_index])
-  time8 = time.time()
+  #time8 = time.time()
   strip.show()
-  time9 = time.time()
-  print(str(time8-time7)+', '+str(time9-time8))
+  #time9 = time.time()
+  #print(str(time8-time7)+', '+str(time9-time8))
   
 if __name__ == '__main__':
   sensor = ICM_20601(I2C_BUS, SENSOR_ADDRESS)
@@ -200,9 +200,14 @@ if __name__ == '__main__':
       #print('updating strands')
       #time5=time.time()
       for strip_index in xrange(len(led_strips)):
+        time12=time.time()
         new_process=Process(target=update_strip,args=(led_strips[strip_index],angular_image[strip_index,theta,:],))
+	time13=time.time()
         processes.append(new_process)
+	time10=time.time()
         new_process.start()
+	time11=time.time()
+	print(str(time11-time10)+', '+str(time13-time12))
       for process in processes:
         process.join()
       #time6=time.time()
