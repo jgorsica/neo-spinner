@@ -88,5 +88,5 @@ class ICM_20601(object):
           for i in xrange(len(gyro_data)):
                if gyro_data[i] > self.GYRO_RANGE/2:
                     gyro_data[i] -= self.GYRO_RANGE
-          print(str(accel_data)+','+str(temp_data)+','+str(gyro_data))
+          #print(str(accel_data)+','+str(temp_data)+','+str(gyro_data))
           return timestamp, accel_data, gyro_data, temp_data
