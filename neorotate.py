@@ -168,6 +168,7 @@ if __name__ == '__main__':
   strip_led_count_list=[LED_COUNT_1,LED_COUNT_2]
   image_array = getImageArray('colors.png', LED_COUNT_1, LED_COUNT_1)
   angular_image = get_angular_image(image_array,angle_list,led_strips)
+  print(angular_image)
   print ('Press Ctrl-C to quit.')
   while True:
     sensor_data = get_sensor_data(sensor)
