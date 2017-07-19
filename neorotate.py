@@ -166,8 +166,8 @@ if __name__ == '__main__':
   print ('Press Ctrl-C to quit.')
   while True:
     sensor_data = get_sensor_data(sensor)
-    gyro[1]=100
-    if gyro[1]>90: #spinning fast enough
+    sensor_data[2]=100
+    if sensor_data[2]>90: #spinning fast enough
       theta = get_theta(sensor_data)
       pixel_colors = get_pixel_colors(angular_image, theta, sensor_data)
       processes=[]
