@@ -178,18 +178,21 @@ if __name__ == '__main__':
   update_count = 0
   while True:
     #print('getting sensor data')
+    time1=time.time()
     sensor_data = get_sensor_data(sensor)
+    time2=time.time()
+    print(time2-time1)
     sensor_data[2]=100
     if sensor_data[2]>90: #spinning fast enough
       theta = get_theta(sensor_data)
       #print(theta)
       #pixel_colors = get_pixel_colors(angular_image, theta, sensor_data)
-      pixel_colors = angular_image[:,theta,:]
+      #pixel_colors = angular_image[:,theta,:]
       #print(pixel_colors)
       processes=[]
       #print('updating strands')
       for strip_index in xrange(len(led_strips)):
-        new_process=Process(target=update_strip,args=(led_strips[strip_index],pixel_colors[strip_index],))
+        new_process=Process(target=update_strip,args=(led_strips[strip_index],angular_image[strip_index,theta,:],))
         processes.append(new_process)
         new_process.start()
       for process in processes:
