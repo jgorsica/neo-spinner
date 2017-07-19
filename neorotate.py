@@ -167,21 +167,26 @@ if __name__ == '__main__':
   strip2 = LED_strand(LED_COUNT_2, LED_PIN_2, LED_DMA_2, LED_ANGLE_2, radius_list_2)
   strip1.begin()
   strip2.begin()
+  print('strands initialized')
   led_strips = [strip1,strip2]
   angle_list = xrange(0,360,1)
   strip_led_count_list=[LED_COUNT_1,LED_COUNT_2]
+  print('getting image array...')
   image_array = getImageArray('colors.png', LED_COUNT_1, LED_COUNT_1)
+  print('getting angular image...')
   angular_image = get_angular_image(image_array,angle_list,led_strips)
   print ('Press Ctrl-C to quit.')
   while True:
+    print('getting sensor data')
     sensor_data = get_sensor_data(sensor)
     sensor_data[2]=100
     if sensor_data[2]>90: #spinning fast enough
       theta = get_theta(sensor_data)
-      print(theta)
+      #print(theta)
       pixel_colors = get_pixel_colors(angular_image, theta, sensor_data)
       #print(pixel_colors)
       processes=[]
+      print('updating strands')
       for strip_index in xrange(len(led_strips)):
 	new_process=Process(target=update_strip,args=(led_strips[strip_index],pixel_colors[strip_index],))
 	processes.append(new_process)
