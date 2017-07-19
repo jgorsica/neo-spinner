@@ -1,7 +1,7 @@
 import smbus
 import time
 
-class ICM-20601(object):
+class ICM_20601(object):
      GYRO_Z_OFFSET_REG = 0x18
      CONFIG_REG = 0x1A
      CONFIG = 0x06 # Gyro Rate 1KHz, heavily filtered
