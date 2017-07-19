@@ -33,7 +33,7 @@ def getImageArray(image_file, width, height):
 	background = Image.new('RGBA',[height,width],(0,0,0))
 	alpha_composite = Image.alpha_composite(background,padded_thumb)
 	alpha_composite.save('thumb.png')
-	arr=np.array(alpha_composite)
+	arr=np.array(alpha_composite).tolist()
 	return arr
 
 #takes image pixel array and parameters describing physical LED strip configuration, 
@@ -60,8 +60,12 @@ def get_angular_image(image_array,angle_list,led_strips):
         y = radius - y_r
         x1 = math.floor(x)
         x2 = x1+1
+	if x2 == len(image_array):
+          x2 = x1
         y2 = math.floor(y)
         y1 = y2+1
+	if y1 == len(image_array[0]):
+          y1 = y2
         #get four closest pixels and bilaterally interpolate
         p11=image_array[x1][y1]
         p21=image_array[x2][y1]
