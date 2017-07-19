@@ -58,11 +58,11 @@ def get_angular_image(image_array,angle_list,led_strips):
         #change is image coordinate system
         x = x_r + radius
         y = radius - y_r
-        x1 = math.floor(x)
+        x1 = int(x)
         x2 = x1+1
 	if x2 == len(image_array):
           x2 = x1
-        y2 = math.floor(y)
+        y2 = int(y)
         y1 = y2+1
 	if y1 == len(image_array[0]):
           y1 = y2
@@ -121,7 +121,7 @@ def get_pixel_colors(angular_image, theta, sensor_data):
   for strip_index in xrange(len(angular_image)):
     single_strip=[]
     for led_index in xrange(len(angular_image[strip_index][0])):
-      pixel_theta = math.floor(theta + pixel_index * angular_pixel_delay)
+      pixel_theta = int(theta + pixel_index * angular_pixel_delay)
       pixel_color = angular_image[strip_index][pixel_theta][led_index]
       single_strip.append(pixel_color)
     pixel_colors.append(single_strip)
