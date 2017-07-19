@@ -58,9 +58,9 @@ def get_angular_image(image_array,angle_list,led_strips):
         #change is image coordinate system
         x = x_r + radius
         y = radius - y_r
-        x1 = floor(x)
+        x1 = math.floor(x)
         x2 = x1+1
-        y2 = floor(y)
+        y2 = math.floor(y)
         y1 = y2+1
         #get four closest pixels and bilaterally interpolate
         p11=image_array[x1][y1]
