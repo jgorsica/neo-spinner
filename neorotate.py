@@ -1,4 +1,5 @@
 import math
+import time
 import numpy as np
 import PIL
 from PIL import Image
@@ -128,10 +129,11 @@ def get_pixel_colors(angular_image, theta, sensor_data):
   return pixel_colors
 
 def turn_off_leds(led_strips):
-  for strip_index in xrange(len(led_strips)):
-	for led_index in xrange(strip_led_count_list[strip_index].get_count()):
-		led_strips[strip_index].setPixelColor(led_index, Color(0,0,0))
-	led_strips[strip_index].show()
+  for strip in led_strips:
+	for led_index in xrange(strip.get_count()):
+		strip.setPixelColor(led_index, Color(0,0,0))
+	strip.show()
+	time.sleep(2)
 	
 def update_strip(strip, pixel_colors):
   for led_index in xrange(strip.get_count()):
