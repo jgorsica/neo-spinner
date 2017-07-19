@@ -26,3 +26,12 @@ class LED_strand(object):
           
      def show(self):
           self.strand.show()
+          
+     def count(self):
+          return self.led_count
+     
+     def theta(self):
+          return self.theta
+     
+     def radius_list(self):
+          return self.radius_list
