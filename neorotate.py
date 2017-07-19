@@ -183,7 +183,8 @@ if __name__ == '__main__':
     if sensor_data[2]>90: #spinning fast enough
       theta = get_theta(sensor_data)
       #print(theta)
-      pixel_colors = get_pixel_colors(angular_image, theta, sensor_data)
+      #pixel_colors = get_pixel_colors(angular_image, theta, sensor_data)
+      pixel_colors = angular_image[:,theta,:]
       #print(pixel_colors)
       processes=[]
       #print('updating strands')
