@@ -17,6 +17,14 @@ LED_PIN_2        = 21      # GPIO pin connected to the pixels (10 uses SPI /dev/
 LED_DMA_2       = 6       # DMA channel to use for generating signal (try 5)
 LED_ANGLE_2 = 90
 
+
+def Color(red, green, blue, white = 0):
+	"""Convert the provided red, green, blue color to a 24-bit color value.
+	Each color component should be a value 0-255 where 0 is the lowest intensity
+	and 255 is the highest intensity.
+	"""
+	return (white << 24) | (red << 16)| (green << 8) | blue
+
 #takes image file and produces array of RGBA pixel values for black padded, alpha blended image of correct size
 def getImageArray(image_file, width, height):
 	im = Image.open(image_file).convert('RGBA')
