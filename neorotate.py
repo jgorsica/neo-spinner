@@ -49,26 +49,28 @@ def getImageArray(image_file, width, height):
 	background = Image.new('RGBA',[height,width],(0,0,0))
 	alpha_composite = Image.alpha_composite(background,padded_thumb)
 	alpha_composite.save('thumb.png')
-	arr=np.array(alpha_composite).tolist()
+	arr=np.array(alpha_composite)
 	return arr
 
 #takes image pixel array and parameters describing physical LED strip configuration, 
 #produces a precalculated array for each strip at each angle
 def get_angular_image(image_array,angle_list,led_strips):
-  angular_image=[]
+  longest_strip_length = 0
+  for strip in led_strips:
+    if strip.get_count()>longest_strip_length:
+      longest_strip_length = strip.get_count()
+  angular_image=np.zeros((len(led_strips),len(angle_list),longest_strip_length,3), dtype=np.int)
   radius = 0
   for strip in led_strips:
     candidate = max([abs(x) for x in strip.get_radius_list()])
     if candidate > radius:
       radius = candidate
-  for strip in led_strips:
-    strip_list=[]
+  for strip_index in xrange(len(led_strips)):
     for theta in angle_list:
-      cos_t = math.cos(theta*math.pi/180.+strip.get_theta())
-      sin_t = math.sin(theta*math.pi/180.+strip.get_theta())
-      pixel_list=[]
-      for led_index in xrange(strip.get_count()):
-        led_radius = strip.get_radius_list()[led_index]
+      cos_t = math.cos(theta*math.pi/180.+led_strips[strip_index].get_theta())
+      sin_t = math.sin(theta*math.pi/180.+led_strips[strip_index].get_theta())
+      for led_index in xrange(led_strips[strip_index].get_count()):
+        led_radius = led_strips[strip_index].get_radius_list()[led_index]
         x_r = led_radius * sin_t
         y_r = led_radius * cos_t
         #change is image coordinate system
@@ -76,23 +78,23 @@ def get_angular_image(image_array,angle_list,led_strips):
         y = radius - y_r
         x1 = int(x)
         x2 = x1+1
-	if x2 == len(image_array):
+	if x2 == image_array.shape[0]:
           x2 = x1
         y2 = int(y)
         y1 = y2+1
-	if y1 == len(image_array[0]):
+	if y1 == image_array.shape[1]:
           y1 = y2
         #get four closest pixels and bilaterally interpolate
-        p11=np.asarray(image_array[x1][y1])
-        p21=np.asarray(image_array[x2][y1])
-        p12=np.asarray(image_array[x1][y2])
-        p22=np.asarray(image_array[x2][y2])
+        p11=image_array[x1,y1]
+        p21=image_array[x2,y1]
+        p12=image_array[x1,y2]
+        p22=image_array[x2,y2]
         p=(y-y2)*(x-x1)*p21+(x2-x)*(y-y2)*p11+(y1-y)*(x-x1)*p22+(x2-x)*(y1-y)*p12
         alpha=p[3]/255.
-        pixel_list.append([int(p[0]*alpha),int(p[1]*alpha),int(p[2]*alpha)])
-      strip_list.append(pixel_list)
-    angular_image.append(strip_list)
-  return np.asarray(angular_image)
+        angular_image[strip_index,theta,led_index,0]=int(p[0]*alpha)
+	angular_image[strip_index,theta,led_index,1]int(p[1]*alpha)
+	angular_image[strip_index,theta,led_index,2]int(p[2]*alpha)
+  return angular_image
   
 def get_sensor_data(sensor):
   ts, accel, gyro, _ = sensor.get_sensor_data()
