@@ -78,11 +78,11 @@ def get_angular_image(image_array,angle_list,led_strips):
         y = radius - y_r
         x1 = int(x)
         x2 = x1+1
-	if x2 == image_array.shape[0]:
+        if x2 == image_array.shape[0]:
           x2 = x1
         y2 = int(y)
         y1 = y2+1
-	if y1 == image_array.shape[1]:
+        if y1 == image_array.shape[1]:
           y1 = y2
         #get four closest pixels and bilaterally interpolate
         p11=image_array[x1,y1]
@@ -91,7 +91,7 @@ def get_angular_image(image_array,angle_list,led_strips):
         p22=image_array[x2,y2]
         p=(y-y2)*(x-x1)*p21+(x2-x)*(y-y2)*p11+(y1-y)*(x-x1)*p22+(x2-x)*(y1-y)*p12
         alpha=p[3]/255.
-	color=Color(int(p[0]*alpha),int(p[1]*alpha),int(p[2]*alpha))
+        color=Color(int(p[0]*alpha),int(p[1]*alpha),int(p[2]*alpha))
         angular_image[strip_index,theta,led_index]=color
   return angular_image
   
@@ -112,13 +112,16 @@ def get_theta(sensor_data):
   ts=sensor_data[0]
   if (ts-prev_ts) > 5:
     prev_ts = ts
+    y_prev = y
+    y_prev_dir = 0
+    y_dir = 0
   theta = prev_theta + v*(ts-prev_ts)
   while theta>=360:
     theta -= 360
   if (y-y_prev)>NOISE_THRESHOLD:
     y_dir=1
     y_prev=y
-  elif (y-y_prev)<NOISE_THRESHOLD:
+  elif (y_prev-y)>NOISE_THRESHOLD:
     y_dir=-1
     y_prev=y
   if (y_dir==-1 and y_prev_dir==1):
@@ -185,11 +188,11 @@ if __name__ == '__main__':
       processes=[]
       #print('updating strands')
       for strip_index in xrange(len(led_strips)):
-	new_process=Process(target=update_strip,args=(led_strips[strip_index],pixel_colors[strip_index],))
-	processes.append(new_process)
-	new_process.start()
+        new_process=Process(target=update_strip,args=(led_strips[strip_index],pixel_colors[strip_index],))
+        processes.append(new_process)
+        new_process.start()
       for process in processes:
-	process.join()
+        process.join()
       update_count += 1
       if update_count%20 == 0:
         print(str(update_count) +' updates')
