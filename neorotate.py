@@ -5,6 +5,7 @@ import PIL
 from PIL import Image
 from multiprocessing import Process
 from led_strand import LED_strand
+from icm_20601 import ICM_20601
 
 # LED strip configuration:
 LED_COUNT_1      = 144      # Number of LED pixels.
@@ -17,6 +18,8 @@ LED_PIN_2        = 21      # GPIO pin connected to the pixels (10 uses SPI /dev/
 LED_DMA_2       = 6       # DMA channel to use for generating signal (try 5)
 LED_ANGLE_2 = 90
 
+I2C_BUS = 1
+SENSOR_ADDRESS = 0x69
 
 def Color(red, green, blue, white = 0):
 	"""Convert the provided red, green, blue color to a 24-bit color value.
@@ -87,11 +90,9 @@ def get_angular_image(image_array,angle_list,led_strips):
     angular_image.append(angle_list)
   return angular_image
   
-def get_sensor_data():
-  ts=0
-  accel_y=0
-  gyro_z=0
-  return [ts,accel_y,gyro_z]
+def get_sensor_data(sensor):
+  ts, accel, gyro, _ = sensor.get_sensor_data()
+  return [ts,accel[1],gyro[2]]
   
 '''uses sensor data to determine exact angular position of the spinner'''
 a=0 #speed dependent angular offset
@@ -150,6 +151,7 @@ def update_strip(strip, pixel_colors):
   strip.show()
   
 if __name__ == '__main__':
+  sensor = ICM_20601(I2C_BUS, SENSOR_ADDRESS)
   radius_list_1=np.linspace((LED_COUNT_1-1)/2.,-1*((LED_COUNT_1-1)/2.),LED_COUNT_1).tolist()
   strip1 = LED_strand(LED_COUNT_1, LED_PIN_1, LED_DMA_1, LED_ANGLE_1, radius_list_1)
   radius_list_2=np.linspace((LED_COUNT_2/2.),1,LED_COUNT_2/2).tolist() + np.linspace(-1,-1*(LED_COUNT_2/2.),LED_COUNT_2/2).tolist()
@@ -163,8 +165,9 @@ if __name__ == '__main__':
   angular_image = get_angular_image(image_array,angle_list,led_strips)
   print ('Press Ctrl-C to quit.')
   while True:
-    sensor_data = get_sensor_data()
-    if sensor_data[1]>90: #spinning fast enough
+    sensor_data = get_sensor_data(sensor)
+    gyro[1]=100
+    if gyro[1]>90: #spinning fast enough
       theta = get_theta(sensor_data)
       pixel_colors = get_pixel_colors(angular_image, theta, sensor_data)
       processes=[]
