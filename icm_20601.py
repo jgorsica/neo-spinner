@@ -36,9 +36,9 @@ class ICM_20601(object):
           self.bus = smbus.SMBus(bus_number)
           self.i2c_address=address
           if self.check_interface():
-               print('interface working')
+               print('sensor interface working')
           else:
-               print('interface not working')
+               print('sensor interface not working')
                quit()
           self.init_registers()
 
@@ -47,7 +47,6 @@ class ICM_20601(object):
 
      def read(self, address):
           byte = self.bus.read_byte_data(self.i2c_address, address)
-          print(byte)
           return byte
 
      def read_bytes(self, address, count):
