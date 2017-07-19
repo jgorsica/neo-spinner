@@ -43,11 +43,11 @@ def get_angular_image(image_array,angle_list,led_strips):
   for strip in led_strips:
     strip_list=[]
     for theta in angle_list:
-      cos_t = math.cos(theta*math.pi/180.+strip.theta())
-      sin_t = math.sin(theta*math.pi/180.+strip.theta())
+      cos_t = math.cos(theta*math.pi/180.+strip.get_theta())
+      sin_t = math.sin(theta*math.pi/180.+strip.get_theta())
       pixel_list=[]
-      for led_index in xrange(strip.count()):
-        led_radius = strip.radius_list()[led_index]
+      for led_index in xrange(strip.get_count()):
+        led_radius = strip.get_radius_list()[led_index]
         x_r = led_radius * sin_t
         y_r = led_radius * cos_t
         #change is image coordinate system
@@ -120,12 +120,12 @@ def get_pixel_colors(angular_image, theta, sensor_data):
 
 def turn_off_leds(led_strips):
   for strip_index in xrange(len(led_strips)):
-	for led_index in xrange(strip_led_count_list[strip_index].count()):
+	for led_index in xrange(strip_led_count_list[strip_index].get_count()):
 		led_strips[strip_index].setPixelColor(led_index, Color(0,0,0))
 	led_strips[strip_index].show()
 	
 def update_strip(strip, pixel_colors):
-  for led_index in xrange(strip.count()):
+  for led_index in xrange(strip.get_count()):
 	color=pixel_colors[led_index]
 	strip.setPixelColor(led_index, Color(color[0],color[1],color[2]))
   strip.show()
