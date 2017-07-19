@@ -110,6 +110,8 @@ def get_theta(sensor_data):
   y=sensor_data[1] # accel_y in integer counts
   ts=sensor_data[0]
   theta = prev_theta + v*(ts-prev_ts)
+  while theta>=360:
+    theta -= 360
   if (y-y_prev)>NOISE_THRESHOLD:
     y_dir=1
     y_prev=y
