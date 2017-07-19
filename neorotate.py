@@ -21,6 +21,10 @@ LED_ANGLE_2 = 90
 I2C_BUS = 1
 SENSOR_ADDRESS = 0x69
 
+TRIM_A=0 #speed dependent angular offset
+TRIM_B=0 #speed independent angualr offset
+NOISE_THRESHOLD=0.05 #accel count delta to trigger direction change
+
 def Color(red, green, blue, white = 0):
 	"""Convert the provided red, green, blue color to a 24-bit color value.
 	Each color component should be a value 0-255 where 0 is the lowest intensity
@@ -95,32 +99,28 @@ def get_sensor_data(sensor):
   return [ts,accel[1],gyro[2]]
   
 '''uses sensor data to determine exact angular position of the spinner'''
-a=0 #speed dependent angular offset
-b=0 #speed independent angualr offset
-noise_threshold=10 #accel count delta to trigger direction change
-theta = b #angle of rotation, 0 = up
+prev_theta = 0 #angle of rotation, 0 = up
 y_dir = 0 #trend of accel_y data
 y_prev_dir=0 #previous_trend of accel_y data
-y=0 #current accel_y data
 y_prev=0 #previous accel_y_data
-ts=0 #current timestamp
 prev_ts=0 #previous timestamp
 def get_theta(sensor_data):
   v=sensor_data[2] # rotational velocity dps
   y=sensor_data[1] # accel_y in integer counts
   ts=sensor_data[0]
-  theta += v*(ts-prev_ts)
-  if (y-y_prev)>noise_threshold:
+  theta = prev_theta + v*(ts-prev_ts)
+  if (y-y_prev)>NOISE_THRESHOLD:
     y_dir=1
     y_prev=y
-  elif (y-y_prev)<noise_threshold:
+  elif (y-y_prev)<NOISE_THRESHOLD:
     y_dir=-1
     y_prev=y
   if (y_dir==-1 and y_dir_prev==1):
-    offset=a*v+b
+    offset=TRIM_A*v+TRIM_B
     theta=(theta+offset)//2
   prev_ts=ts
   y_prev_dir=y_dir
+  prev_theta = theta
   return theta
   
 #returns lists for pixel colors for each LED in each strip based on the angular position of the LED
