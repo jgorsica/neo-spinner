@@ -92,8 +92,8 @@ def get_angular_image(image_array,angle_list,led_strips):
         p=(y-y2)*(x-x1)*p21+(x2-x)*(y-y2)*p11+(y1-y)*(x-x1)*p22+(x2-x)*(y1-y)*p12
         alpha=p[3]/255.
         angular_image[strip_index,theta,led_index,0]=int(p[0]*alpha)
-	angular_image[strip_index,theta,led_index,1]int(p[1]*alpha)
-	angular_image[strip_index,theta,led_index,2]int(p[2]*alpha)
+	angular_image[strip_index,theta,led_index,1]=int(p[1]*alpha)
+	angular_image[strip_index,theta,led_index,2]=int(p[2]*alpha)
   return angular_image
   
 def get_sensor_data(sensor):
