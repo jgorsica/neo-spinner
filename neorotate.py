@@ -105,6 +105,7 @@ y_prev_dir=0 #previous_trend of accel_y data
 y_prev=0 #previous accel_y_data
 prev_ts=0 #previous timestamp
 def get_theta(sensor_data):
+  global prev_theta, y_dir, y_prev_dir, y_prev, prev_ts
   v=sensor_data[2] # rotational velocity dps
   y=sensor_data[1] # accel_y in integer counts
   ts=sensor_data[0]
