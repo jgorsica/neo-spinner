@@ -121,16 +121,18 @@ def turn_off_leds(led_strips):
 	led_strips[strip_index].show()
 	
 def update_strip(strip, pixel_colors):
-  for led_index in xrange(len(pixel_colors)):
+  for led_index in xrange(strip.count()):
 	color=pixel_colors[led_index]
 	strip.setPixelColor(led_index, Color(color[0],color[1],color[2]))
   strip.show()
   
 if __name__ == '__main__':
-  radius = ((strip.count()-1)/2.)
-  led_radius = led_index - radius
-  strip1 = LED_strand(LED_COUNT_1, LED_PIN_1, LED_DMA_1, LED_ANGLE_1, radius_list)
-  strip2 = LED_strand(LED_COUNT_2, LED_PIN_2, LED_DMA_2, LED_ANGLE_2, radius_list)
+  radius_list_1=xrange((LED_COUNT_1-1)/2.,-1*((LED_COUNT_1-1)/2.+1),-1)
+  print(radius_list_1)
+  strip1 = LED_strand(LED_COUNT_1, LED_PIN_1, LED_DMA_1, LED_ANGLE_1, radius_list_1)
+  radius_list_2=xrange((LED_COUNT_2/2.),0,-1) + xrange(-1,-1*(LED_COUNT_2/2.+1),-1)
+  print(radius_list_2)
+  strip2 = LED_strand(LED_COUNT_2, LED_PIN_2, LED_DMA_2, LED_ANGLE_2, radius_list_2)
   strip1.begin()
   strip2.begin()
   led_strips = [strip1,strip2]
