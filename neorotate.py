@@ -29,7 +29,7 @@ def getImageArray(image_file, width, height):
 	print (im.size)
 	print (paste_region)
 	print (padded_thumb.size)
-	padded_thumb.paste(im, paste_region)
+	padded_thumb.paste(im, (paste_x_offset,paste_y_offset))
 	background = Image.new('RGBA',[height,width],(0,0,0))
 	alpha_composite = Image.alpha_composite(background,padded_thumb)
 	alpha_composite.save('thumb.png')
