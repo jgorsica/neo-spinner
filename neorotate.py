@@ -40,6 +40,11 @@ def getImageArray(image_file, width, height):
 #produces a precalculated array for each strip at each angle
 def get_angular_image(image_array,angle_list,led_strips):
   angular_image=[]
+  radius = 0
+  for strip in led_strips:
+    candidate = math.max([abs(x) for x in strip.get_radius_list()])
+    if candidate > radius:
+      radius = candidate
   for strip in led_strips:
     strip_list=[]
     for theta in angle_list:
@@ -132,10 +137,8 @@ def update_strip(strip, pixel_colors):
   
 if __name__ == '__main__':
   radius_list_1=np.linspace((LED_COUNT_1-1)/2.,-1*((LED_COUNT_1-1)/2.),LED_COUNT_1).tolist()
-  print(radius_list_1)
   strip1 = LED_strand(LED_COUNT_1, LED_PIN_1, LED_DMA_1, LED_ANGLE_1, radius_list_1)
   radius_list_2=np.linspace((LED_COUNT_2/2.),1,LED_COUNT_2/2).tolist() + np.linspace(-1,-1*(LED_COUNT_2/2.),LED_COUNT_2/2).tolist()
-  print(radius_list_2)
   strip2 = LED_strand(LED_COUNT_2, LED_PIN_2, LED_DMA_2, LED_ANGLE_2, radius_list_2)
   strip1.begin()
   strip2.begin()
