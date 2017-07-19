@@ -176,8 +176,9 @@ if __name__ == '__main__':
   print('getting angular image...')
   angular_image = get_angular_image(image_array,angle_list,led_strips)
   print ('Press Ctrl-C to quit.')
+  update_count = 0
   while True:
-    print('getting sensor data')
+    #print('getting sensor data')
     sensor_data = get_sensor_data(sensor)
     sensor_data[2]=100
     if sensor_data[2]>90: #spinning fast enough
@@ -186,12 +187,16 @@ if __name__ == '__main__':
       pixel_colors = get_pixel_colors(angular_image, theta, sensor_data)
       #print(pixel_colors)
       processes=[]
-      print('updating strands')
+      #print('updating strands')
       for strip_index in xrange(len(led_strips)):
 	new_process=Process(target=update_strip,args=(led_strips[strip_index],pixel_colors[strip_index],))
 	processes.append(new_process)
 	new_process.start()
       for process in processes:
 	process.join()
+      update_count += 1
+      if update_count ==10:
+        print('10 updates')
+	update_count=0
     else:
       turn_off_leds(led_strips)
