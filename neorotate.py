@@ -19,13 +19,13 @@ LED_ANGLE_2 = 90
 #takes image file and produces array of RGBA pixel values for black padded, alpha blended image of correct size
 def getImageArray(image_file, width, height):
 	im = Image.open(image_file).convert('RGBA')
-	thumb = im.thumbnail([height,width],Image.ANTIALIAS)
+	im.thumbnail([height,width],Image.ANTIALIAS)
 	padded_thumb = Image.new('RGBA',(width, height), (0, 0, 0))
-	paste_x_offset = width-(thumb.width)//2
-	paste_y_offset = height-(thumb.height)//2
-	paste_region = (paste_x_offset,paste_y_offset,paste_x_offset+thumb.width-1, \
-			paste_y_offset+thumb.height-1)
-	padded_thumb.paste(thumb, paste_region)
+	paste_x_offset = width-(im.width)//2
+	paste_y_offset = height-(im.height)//2
+	paste_region = (paste_x_offset,paste_y_offset,paste_x_offset+im.width-1, \
+			paste_y_offset+im.height-1)
+	padded_thumb.paste(im, paste_region)
 	background = Image.new('RGBA',[height,width],(0,0,0))
 	alpha_composite = Image.alpha_composite(background,padded_thumb)
 	alpha_composite.save('thumb.png')
