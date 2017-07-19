@@ -3,22 +3,18 @@ import numpy as np
 import PIL
 from PIL import Image
 from multiprocessing import Process
-from neopixel import *
+from led_strand import LED_strand
 
 # LED strip configuration:
 LED_COUNT_1      = 144      # Number of LED pixels.
 LED_PIN_1        = 10      # GPIO pin connected to the pixels (18 uses PWM!).
 LED_DMA_1        = 5       # DMA channel to use for generating signal (try 5)
+LED_ANGLE_1 = 0
 
 LED_COUNT_2      = 144      # Number of LED pixels.
 LED_PIN_2        = 21      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_DMA_2       = 6       # DMA channel to use for generating signal (try 5)
-
-LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
-LED_BRIGHTNESS = 16     # Set to 0 for darkest and 255 for brightest
-LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
-LED_CHANNEL    = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
-LED_STRIP      = ws.WS2811_STRIP_RGB   # Strip type and colour ordering
+LED_ANGLE_2 = 90
 
 #takes image file and produces array of RGBA pixel values for black padded, alpha blended image of correct size
 def getImageArray(image_file, width, height):
@@ -132,14 +128,13 @@ def update_strip(strip, pixel_colors):
   strip.show()
   
 if __name__ == '__main__':
-  strip1 = Adafruit_NeoPixel(LED_COUNT_1, LED_PIN_1, LED_FREQ_HZ, LED_DMA_1, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
-  strip2 = Adafruit_NeoPixel(LED_COUNT_2, LED_PIN_2, LED_FREQ_HZ, LED_DMA_2, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
+  strip1 = LED_strand(LED_COUNT_1, LED_PIN_1, LED_DMA_1, LED_ANGLE_1, radius_list)
+  strip2 = LED_strand(LED_COUNT_2, LED_PIN_2, LED_DMA_2, LED_ANGLE_2, radius_list)
   strip1.begin()
   strip2.begin()
   led_strips = [strip1,strip2]
   angle_list = xrange(0,360,1)
   strip_led_count_list=[LED_COUNT_1,LED_COUNT_2]
-  strip_offset_angle_list = [0,90]
   image_array = getImageArray(pic.png, LED_COUNT_1, LED_COUNT_1)
   angular_image = get_angular_image(image_array,angle_list,led_strip_angle_list)
   print ('Press Ctrl-C to quit.')
