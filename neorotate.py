@@ -140,7 +140,7 @@ def get_pixel_colors(angular_image, theta, sensor_data):
       while pixel_theta >= 360:
         pixel_theta -= 360
       pixel_color = angular_image[strip_index,pixel_theta,led_index]
-      single_strip.append(pixel_color.aslist())
+      single_strip.append(pixel_color.tolist())
     pixel_colors.append(single_strip)
   return pixel_colors
 
