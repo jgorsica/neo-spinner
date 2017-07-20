@@ -202,7 +202,7 @@ if __name__ == '__main__':
     sensor_data[2]=100
     if sensor_data[2]>90: #spinning fast enough
       theta = get_theta(sensor_data)
-      print(theta)
+      #print(theta)
     else:
       theta = -1
     time.sleep(0.001)
