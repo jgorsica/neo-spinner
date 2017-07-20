@@ -133,16 +133,15 @@ def get_theta(sensor_data):
   
 #returns lists for pixel colors for each LED in each strip based on the angular position of the LED
 #at the time it receives its color command
-def get_pixel_colors(angular_image, theta, sensor_data):
-  angular_pixel_delay = 0.00003 * sensor_data[2]
-  pixel_colors=np.zeros((angular_image.shape[0],angular_image.shape[2]),dtype=np.int)
-  for strip_index in xrange(angular_image.shape[0]):
-    for led_index in xrange(angular_image.shape[2]):
-      pixel_theta = int(theta + led_index * angular_pixel_delay)
-      while pixel_theta >= 360:
-        pixel_theta -= 360
-      pixel_color = angular_image[strip_index,pixel_theta,led_index]
-      pixel_colors[strip_index,led_index]=pixel_color
+def get_pixel_colors(pixel_colors_by_angle, theta, spin_rate):
+  angular_pixel_delay = 0.00003 * spin_rate
+  pixel_colors=np.zeros((angular_image.shape[1]),dtype=np.int)
+  for led_index in xrange(angular_image.shape[2]):
+    pixel_theta = int(theta + led_index * angular_pixel_delay)
+    while pixel_theta >= 360:
+      pixel_theta -= 360
+    pixel_color = angular_image[strip_index,pixel_theta,led_index]
+    pixel_colors[strip_index,led_index]=pixel_color
   return pixel_colors
 
 def turn_off_leds(led_strips):
@@ -157,16 +156,17 @@ def update_strip(strip, pixel_colors_for_strip):
 	strip.setPixelColor(led_index, pixel_colors_for_strip[led_index])
   strip.show()
 	
-def update_loop(strip, image_array, angle_list, theta_received):
+def update_loop(strip, image_array, angle_list, theta_received, spin_rate_received):
   print('getting angular image...')
   pixel_colors_by_angle = get_angular_image(image_array,angle_list,[strip])[0]
   update_count = 0
   while True:
     if theta_received.value >= 0: #spinning fast enough
       #print(theta_received.value)
+      pixels=pixel_colors_by_angle[theta_received.value]
       #do we need a per pixel rotation offset?
-      #pixel_colors = get_pixel_colors(angular_image, theta, sensor_data)
-      update_strip(strip, pixel_colors_by_angle[theta_received.value])
+      #pixels = get_pixel_colors(pixel_colors_by_angle, theta_received.value, spin_rate_received.value)
+      update_strip(strip, pixels)
       update_count += 1
       if update_count%100 == 0:
         print(str(update_count) +' updates')
@@ -190,18 +190,20 @@ if __name__ == '__main__':
   angle_list = xrange(0,360,1) #used as array index, so not easily changed
   print('getting image array...')
   image_array = getImageArray('colors.png', LED_COUNT_1, LED_COUNT_1)
-  #create variable in shared memory to pass new theta values to processes running update loops
+  #create variables in shared memory to pass new theta and spin rate values to processes running update loops
   theta_to_pass = Value('i', 0)
+  spin_rate_to_pass = Value('d',0)
   print ('Starting process for each strand, Press Ctrl-C to quit.')
   processes=[]
   for strip_index in xrange(len(led_strips)):
-    new_process=Process(target=update_loop,args=(led_strips[strip_index], image_array, angle_list, theta_to_pass,))
+    new_process=Process(target=update_loop,args=(led_strips[strip_index], image_array, angle_list, theta_to_pass, spin_rate_to_pass))
     processes.append(new_process)
     new_process.start()
   #start loop to get new sensor data, compute angle of rotation, and update other processes
   while True:
     sensor_data = get_sensor_data(sensor)
     sensor_data[2]=100
+    spin_rate_to_pass.value=sensor_data[2]
     if sensor_data[2]>90: #spinning fast enough
       theta_to_pass.value = int(get_theta(sensor_data))
       #print(theta)
