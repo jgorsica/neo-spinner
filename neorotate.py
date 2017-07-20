@@ -50,7 +50,7 @@ def getImageArray(image_file, width, height):
 	alpha_composite = Image.alpha_composite(background,padded_thumb)
 	alpha_composite.save('thumb.png')
 	arr=np.array(alpha_composite)
-	return arr
+	return arr[:,:,0:2]
 
 #takes image pixel array and parameters describing physical LED strip configuration, 
 #produces a precalculated array for each strip at each angle
@@ -90,8 +90,7 @@ def get_angular_image(image_array,angle_list,led_strips):
         p12=image_array[x1,y2]
         p22=image_array[x2,y2]
         p=(y-y2)*(x-x1)*p21+(x2-x)*(y-y2)*p11+(y1-y)*(x-x1)*p22+(x2-x)*(y1-y)*p12
-        alpha=p[3]/255.
-        color=Color(int(p[0]*alpha),int(p[1]*alpha),int(p[2]*alpha))
+        color=Color(int(p[0],int(p[1]),int(p[2])
         angular_image[strip_index,theta,led_index]=color
   return angular_image
   
