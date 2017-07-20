@@ -3,7 +3,7 @@ import time
 import numpy as np
 import PIL
 from PIL import Image
-from multiprocessing import Process
+from multiprocessing import Process, Value
 from led_strand import LED_strand
 from icm_20601 import ICM_20601
 
@@ -158,15 +158,14 @@ def update_strip(strip, pixel_colors_for_strip):
 	strip.setPixelColor(led_index, pixel_colors_for_strip[led_index])
   strip.show()
 	
-def update_loop(strip, pixel_colors_by_angle):
-  global theta
+def update_loop(strip, pixel_colors_by_angle, theta_received):
   update_count = 0
   while True:
-    if theta >= 0: #spinning fast enough
-      print(theta)
+    if theta_received.value >= 0: #spinning fast enough
+      print(theta_received.value)
       #pixel_colors = get_pixel_colors(angular_image, theta, sensor_data)
       #pixel_colors = angular_image[:,theta,:]
-      update_strip(strip, pixel_colors_by_angle[theta])
+      update_strip(strip, pixel_colors_by_angle[theta_received.value])
       update_count += 1
       if update_count%20 == 0:
         print(str(update_count) +' updates')
@@ -175,7 +174,6 @@ def update_loop(strip, pixel_colors_by_angle):
     
   
 if __name__ == '__main__':
-  global theta
   sensor = ICM_20601(I2C_BUS, SENSOR_ADDRESS)
   radius_list_1=np.linspace((LED_COUNT_1-1)/2.,-1*((LED_COUNT_1-1)/2.),LED_COUNT_1).tolist()
   strip1 = LED_strand(LED_COUNT_1, LED_PIN_1, LED_DMA_1, LED_ANGLE_1, radius_list_1)
@@ -192,20 +190,20 @@ if __name__ == '__main__':
   print('getting angular image...')
   angular_image = get_angular_image(image_array,angle_list,led_strips)
   print ('Press Ctrl-C to quit.')
-  theta=0
+  theta_to_pass = Value('i', 0)
   processes=[]
   for strip_index in xrange(len(led_strips)):
-    new_process=Process(target=update_loop,args=(led_strips[strip_index],angular_image[strip_index,:,:],))
+    new_process=Process(target=update_loop,args=(led_strips[strip_index],angular_image[strip_index,:,:], theta_to_pass,))
     processes.append(new_process)
     new_process.start()
   while True:
     sensor_data = get_sensor_data(sensor)
     sensor_data[2]=100
     if sensor_data[2]>90: #spinning fast enough
-      theta = get_theta(sensor_data)
+      theta_to_pass.value = get_theta(sensor_data)
       #print(theta)
     else:
-      theta = -1
+      theta_to_pass.value = -1
     time.sleep(0.001)
   for process in processes:
       process.join()
