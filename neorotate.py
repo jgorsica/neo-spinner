@@ -192,6 +192,7 @@ if __name__ == '__main__':
   print('getting angular image...')
   angular_image = get_angular_image(image_array,angle_list,led_strips)
   print ('Press Ctrl-C to quit.')
+  theta=0
   processes=[]
   for strip_index in xrange(len(led_strips)):
     new_process=Process(target=update_loop,args=(led_strips[strip_index],angular_image[strip_index,:,:],))
