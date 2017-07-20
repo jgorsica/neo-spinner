@@ -25,8 +25,6 @@ TRIM_A=0 #speed dependent angular offset
 TRIM_B=0 #speed independent angualr offset
 NOISE_THRESHOLD=0.05 #accel count delta to trigger direction change
 
-theta=0
-
 def Color(red, green, blue, white = 0):
 	"""Convert the provided red, green, blue color to a 24-bit color value.
 	Each color component should be a value 0-255 where 0 is the lowest intensity
@@ -204,6 +202,7 @@ if __name__ == '__main__':
     sensor_data[2]=100
     if sensor_data[2]>90: #spinning fast enough
       theta = get_theta(sensor_data)
+      print(theta)
     else:
       theta = -1
     time.sleep(0.001)
