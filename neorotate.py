@@ -163,7 +163,7 @@ def update_loop(strip, pixel_colors_by_angle):
   update_count = 0
   while True:
     if theta >= 0: #spinning fast enough
-      #print(theta)
+      print(theta)
       #pixel_colors = get_pixel_colors(angular_image, theta, sensor_data)
       #pixel_colors = angular_image[:,theta,:]
       update_strip(strip, pixel_colors_by_angle[theta])
