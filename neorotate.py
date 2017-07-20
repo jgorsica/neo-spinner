@@ -136,12 +136,12 @@ def get_theta(sensor_data):
 def get_pixel_colors(pixel_colors_by_angle, theta, spin_rate):
   angular_pixel_delay = 0.00003 * spin_rate
   pixel_colors=np.zeros((angular_image.shape[1]),dtype=np.int)
-  for led_index in xrange(angular_image.shape[2]):
+  for led_index in xrange(angular_image.shape[1]):
     pixel_theta = int(theta + led_index * angular_pixel_delay)
     while pixel_theta >= 360:
       pixel_theta -= 360
-    pixel_color = angular_image[strip_index,pixel_theta,led_index]
-    pixel_colors[strip_index,led_index]=pixel_color
+    pixel_color = pixel_colors_by_angle[pixel_theta,led_index]
+    pixel_colors[led_index]=pixel_color
   return pixel_colors
 
 def turn_off_leds(led_strips):
