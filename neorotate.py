@@ -25,6 +25,8 @@ TRIM_A=0 #speed dependent angular offset
 TRIM_B=0 #speed independent angualr offset
 NOISE_THRESHOLD=0.05 #accel count delta to trigger direction change
 
+theta=0
+
 def Color(red, green, blue, white = 0):
 	"""Convert the provided red, green, blue color to a 24-bit color value.
 	Each color component should be a value 0-255 where 0 is the lowest intensity
@@ -149,20 +151,33 @@ def get_pixel_colors(angular_image, theta, sensor_data):
 def turn_off_leds(led_strips):
   for strip in led_strips:
 	for led_index in xrange(strip.get_count()):
-		strip.setPixelColor(led_index, Color(0,0,0))
+		strip.setPixelColor(led_index, 0)
 	strip.show()
 	time.sleep(2)
 	
 def update_strip(strip, pixel_colors_for_strip):
-  #time7 = time.time()
   for led_index in xrange(strip.get_count()):
 	strip.setPixelColor(led_index, pixel_colors_for_strip[led_index])
-  #time8 = time.time()
   strip.show()
-  #time9 = time.time()
-  #print(str(time8-time7)+', '+str(time9-time8))
+	
+def update_loop(strip, pixel_colors_by_angle):
+  global theta
+  update_count = 0
+  while True:
+    if theta >= 0: #spinning fast enough
+      #print(theta)
+      #pixel_colors = get_pixel_colors(angular_image, theta, sensor_data)
+      #pixel_colors = angular_image[:,theta,:]
+      update_strip(strip, pixel_colors_by_angle[theta])
+      update_count += 1
+      if update_count%20 == 0:
+        print(str(update_count) +' updates')
+    else:
+	turn_off_leds([strip])
+    
   
 if __name__ == '__main__':
+  global theta
   sensor = ICM_20601(I2C_BUS, SENSOR_ADDRESS)
   radius_list_1=np.linspace((LED_COUNT_1-1)/2.,-1*((LED_COUNT_1-1)/2.),LED_COUNT_1).tolist()
   strip1 = LED_strand(LED_COUNT_1, LED_PIN_1, LED_DMA_1, LED_ANGLE_1, radius_list_1)
@@ -179,41 +194,18 @@ if __name__ == '__main__':
   print('getting angular image...')
   angular_image = get_angular_image(image_array,angle_list,led_strips)
   print ('Press Ctrl-C to quit.')
-  update_count = 0
+  processes=[]
+  for strip_index in xrange(len(led_strips)):
+    new_process=Process(target=update_loop,args=(led_strips[strip_index],angular_image[strip_index,:,:],))
+    processes.append(new_process)
+    new_process.start()
   while True:
-    #print('getting sensor data')
-    time1=time.time()
     sensor_data = get_sensor_data(sensor)
-    #time2=time.time()
-    #print(time2-time1)
     sensor_data[2]=100
     if sensor_data[2]>90: #spinning fast enough
-      #time3=time.time()
       theta = get_theta(sensor_data)
-      #time4=time.time()
-      #print(time4-time3)
-      #print(theta)
-      #pixel_colors = get_pixel_colors(angular_image, theta, sensor_data)
-      #pixel_colors = angular_image[:,theta,:]
-      #print(pixel_colors)
-      processes=[]
-      #print('updating strands')
-      #time5=time.time()
-      for strip_index in xrange(len(led_strips)):
-        time12=time.time()
-        new_process=Process(target=update_strip,args=(led_strips[strip_index],angular_image[strip_index,theta,:],))
-	time13=time.time()
-        processes.append(new_process)
-	time10=time.time()
-        new_process.start()
-	time11=time.time()
-	print(str(time11-time10)+', '+str(time13-time12))
-      for process in processes:
-        process.join()
-      #time6=time.time()
-      #print(time6-time5)
-      update_count += 1
-      if update_count%20 == 0:
-        print(str(update_count) +' updates')
     else:
-      turn_off_leds(led_strips)
+      theta = -1
+    time.sleep(0.001)
+  for process in processes:
+      process.join()
