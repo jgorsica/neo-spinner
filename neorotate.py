@@ -157,17 +157,18 @@ def update_strip(strip, pixel_colors_for_strip):
 	strip.setPixelColor(led_index, pixel_colors_for_strip[led_index])
   strip.show()
 	
-def update_loop(strip, pixel_colors_by_angle, theta_received):
+def update_loop(strip, image_array, angle_list, theta_received):
+  print('getting angular image...')
+  pixel_colors_by_angle = get_angular_image(image_array,angle_list,[strip])[0]
   update_count = 0
   while True:
     if theta_received.value >= 0: #spinning fast enough
       #print(theta_received.value)
+      #do we need a per pixel rotation offset?
       #pixel_colors = get_pixel_colors(angular_image, theta, sensor_data)
-      #pixel_colors = angular_image[:,theta,:]
-      #print(pixel_colors_by_angle[theta_received.value,20])
       update_strip(strip, pixel_colors_by_angle[theta_received.value])
       update_count += 1
-      if update_count%20 == 0:
+      if update_count%100 == 0:
         print(str(update_count) +' updates')
     else:
 	turn_off_leds([strip])
@@ -175,27 +176,29 @@ def update_loop(strip, pixel_colors_by_angle, theta_received):
   
 if __name__ == '__main__':
   sensor = ICM_20601(I2C_BUS, SENSOR_ADDRESS)
+  '''initialize strands'''
+  #evenly spaced even number of LEDs
   radius_list_1=np.linspace((LED_COUNT_1-1)/2.,-1*((LED_COUNT_1-1)/2.),LED_COUNT_1).tolist()
   strip1 = LED_strand(LED_COUNT_1, LED_PIN_1, LED_DMA_1, LED_ANGLE_1, radius_list_1)
+  #evenly spaced even number of LEDs with 1 LED gap in middle
   radius_list_2=np.linspace((LED_COUNT_2/2.),1,LED_COUNT_2/2).tolist() + np.linspace(-1,-1*(LED_COUNT_2/2.),LED_COUNT_2/2).tolist()
   strip2 = LED_strand(LED_COUNT_2, LED_PIN_2, LED_DMA_2, LED_ANGLE_2, radius_list_2)
   strip1.begin()
   strip2.begin()
   print('strands initialized')
   led_strips = [strip1,strip2]
-  angle_list = xrange(0,360,1)
-  strip_led_count_list=[LED_COUNT_1,LED_COUNT_2]
+  angle_list = xrange(0,360,1) #used as array index, so not easily changed
   print('getting image array...')
   image_array = getImageArray('colors.png', LED_COUNT_1, LED_COUNT_1)
-  print('getting angular image...')
-  angular_image = get_angular_image(image_array,angle_list,led_strips)
-  print ('Press Ctrl-C to quit.')
+  #create variable in shared memory to pass new theta values to processes running update loops
   theta_to_pass = Value('i', 0)
+  print ('Starting process for each strand, Press Ctrl-C to quit.')
   processes=[]
   for strip_index in xrange(len(led_strips)):
-    new_process=Process(target=update_loop,args=(led_strips[strip_index],angular_image[strip_index,:,:], theta_to_pass,))
+    new_process=Process(target=update_loop,args=(led_strips[strip_index], image_array, angle_list, theta_to_pass,))
     processes.append(new_process)
     new_process.start()
+  #start loop to get new sensor data, compute angle of rotation, and update other processes
   while True:
     sensor_data = get_sensor_data(sensor)
     sensor_data[2]=100
@@ -204,6 +207,6 @@ if __name__ == '__main__':
       #print(theta)
     else:
       theta_to_pass.value = -1
-    time.sleep(0.001)
+    time.sleep(0.002)
   for process in processes:
       process.join()
