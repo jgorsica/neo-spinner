@@ -50,7 +50,7 @@ def getImageArray(image_file, width, height):
 	alpha_composite = Image.alpha_composite(background,padded_thumb)
 	alpha_composite.save('thumb.png')
 	arr=np.array(alpha_composite)
-	return arr[:,:,0:2]
+	return arr[:,:,0:3]
 
 #takes image pixel array and parameters describing physical LED strip configuration, 
 #produces a precalculated array for each strip at each angle
