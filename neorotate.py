@@ -129,7 +129,7 @@ def get_theta(sensor_data):
     y_prev=y
   if (y_dir==-1 and y_prev_dir==1):
     offset=TRIM_A*v+TRIM_B
-    theta=(theta+offset)//2
+    #theta=(theta+offset)//2
   prev_ts=ts
   y_prev_dir=y_dir
   prev_theta = theta
