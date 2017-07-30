@@ -78,28 +78,28 @@ def get_angular_image(filename,image_array,angle_list,led_strips):
         cos_t = math.cos((theta+led_strips[strip_index].get_theta())*math.pi/180.)
         sin_t = math.sin((theta+led_strips[strip_index].get_theta())*math.pi/180.)
         for led_index in xrange(led_strips[strip_index].get_count()):
-    led_radius = led_strips[strip_index].get_radius_list()[led_index]
-    x_r = led_radius * sin_t
-    y_r = led_radius * cos_t
-    #change is image coordinate system
-    x = x_r + radius
-    y = radius - y_r
-    x1 = int(x)
-    x2 = x1+1
-    if x2 == image_array.shape[0]:
-      x2 = x1
-    y2 = int(y)
-    y1 = y2+1
-    if y1 == image_array.shape[1]:
-      y1 = y2
-    #get four closest pixels and bilaterally interpolate
-    p11=image_array[x1,y1]
-    p21=image_array[x2,y1]
-    p12=image_array[x1,y2]
-    p22=image_array[x2,y2]
-    p=(y-y2)*(x-x1)*p21+(x2-x)*(y-y2)*p11+(y1-y)*(x-x1)*p22+(x2-x)*(y1-y)*p12
-    color=Color(int(p[0]),int(p[1]),int(p[2]))
-    angular_image[strip_index,theta,led_index]=color
+          led_radius = led_strips[strip_index].get_radius_list()[led_index]
+          x_r = led_radius * sin_t
+          y_r = led_radius * cos_t
+          #change is image coordinate system
+          x = x_r + radius
+          y = radius - y_r
+          x1 = int(x)
+          x2 = x1+1
+          if x2 == image_array.shape[0]:
+            x2 = x1
+          y2 = int(y)
+          y1 = y2+1
+          if y1 == image_array.shape[1]:
+            y1 = y2
+          #get four closest pixels and bilaterally interpolate
+          p11=image_array[x1,y1]
+          p21=image_array[x2,y1]
+          p12=image_array[x1,y2]
+          p22=image_array[x2,y2]
+          p=(y-y2)*(x-x1)*p21+(x2-x)*(y-y2)*p11+(y1-y)*(x-x1)*p22+(x2-x)*(y1-y)*p12
+          color=Color(int(p[0]),int(p[1]),int(p[2]))
+          angular_image[strip_index,theta,led_index]=color
     f = open(fname, 'w')
     pickle.dump(angular_image, f)
     f.close()
