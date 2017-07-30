@@ -216,10 +216,10 @@ if __name__ == '__main__':
   #start loop to get new sensor data, compute angle of rotation, and update other processes
   while True:
     sensor_data = get_sensor_data(sensor)
-    accel_buffer.append(sensor_data[1])
-    if len(accel_buffer) == 200:
-	print(accel_buffer)
-	accel_buffer=[]
+    #accel_buffer.append(sensor_data[1])
+    #if len(accel_buffer) == 200:
+    #  print(accel_buffer)
+    #  accel_buffer=[]
     #print(sensor_data)
     #sensor_data[2]=100
     spin_rate_to_pass.value=sensor_data[2]
