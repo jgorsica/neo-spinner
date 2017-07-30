@@ -3,6 +3,7 @@ import time
 import numpy as np
 import os.path
 import pickle
+import sys
 import PIL
 from PIL import Image
 from multiprocessing import Process, Value
@@ -206,7 +207,8 @@ if __name__ == '__main__':
   angle_list = xrange(0,360,1) #used as array index, so not easily changed
   print('getting image array...')
   #image_filename='clock.jpg'
-  image_filename= 'colors.png'
+  #image_filename= 'colors.png'
+  image_filename = sys.argv[1]
   image_array = getImageArray(image_filename, LED_COUNT_1, LED_COUNT_1)
   #create variables in shared memory to pass new theta and spin rate values to processes running update loops
   theta_to_pass = Value('i', 0)
