@@ -212,11 +212,16 @@ if __name__ == '__main__':
     new_process=Process(target=update_loop,args=(led_strips[strip_index], image_array, angle_list, theta_to_pass, spin_rate_to_pass))
     processes.append(new_process)
     new_process.start()
+  accel_buffer = []
   #start loop to get new sensor data, compute angle of rotation, and update other processes
   while True:
     sensor_data = get_sensor_data(sensor)
-    print(sensor_data)
-    #sensor_data[2]=100
+    accel_buffer.append(sensor_data[1])
+    if len(accel_buffer) == 100:
+	print(accel_buffer)
+	accel_buffer=[]
+    #print(sensor_data)
+    #sensor_data[2]=200
     spin_rate_to_pass.value=sensor_data[2]
     if sensor_data[2]>-900: #spinning fast enough
       theta_to_pass.value = int(get_theta(sensor_data))
