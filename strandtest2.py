@@ -93,17 +93,17 @@ def flash(strip,color):
 if __name__ == '__main__':
 	# Create NeoPixel object with appropriate configuration.
 	strip1 = Adafruit_NeoPixel(LED_COUNT, LED_PIN1, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
-	#strip2 = Adafruit_NeoPixel(LED_COUNT, LED_PIN2, LED_FREQ_HZ, 13, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
+	strip2 = Adafruit_NeoPixel(LED_COUNT, LED_PIN2, LED_FREQ_HZ, 13, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL, LED_STRIP)
 	# Intialize the library (must be called once before other functions).
 	strip1.begin()
-	#strip2.begin()
+	strip2.begin()
 	
 	print ('Press Ctrl-C to quit.')
 	p1=Process(target=flash,args=(strip1,Color(100,0,0),))
-	#p2=Process(target=flash,args=(strip2,Color(0,100,0),))
+	p2=Process(target=flash,args=(strip2,Color(0,100,0),))
 	p1.start()
-	#p2.start()
+	p2.start()
 	p1.join()
-	#p2.join()
+	p2.join()
 
 
