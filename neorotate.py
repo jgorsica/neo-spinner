@@ -1,6 +1,8 @@
 import math
 import time
 import numpy as np
+import os.path
+import pickle
 import PIL
 from PIL import Image
 from multiprocessing import Process, Value
@@ -158,7 +160,16 @@ def update_strip(strip, pixel_colors_for_strip):
 	
 def update_loop(strip, image_array, angle_list, theta_received, spin_rate_received):
   print('getting angular image...')
-  pixel_colors_by_angle = get_angular_image(image_array,angle_list,[strip])[0]
+  fname = str(strip.pin)+'.p'
+  if os.path.isfile(fname) :
+    f = open(fname, 'r')
+    pixel_colors_by_angle = pickle.load(f)
+    f.close()
+  else:
+    pixel_colors_by_angle = get_angular_image(image_array,angle_list,[strip])[0]
+    f = open(fname, 'w')
+    pickle.dump(pixel_colors_by_angle, f)
+    f.close()
   update_count = 0
   while True:
     if theta_received.value >= 0: #spinning fast enough
