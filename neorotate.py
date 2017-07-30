@@ -220,7 +220,7 @@ if __name__ == '__main__':
     spin_rate_to_pass.value=sensor_data[2]
     if sensor_data[2]>-900: #spinning fast enough
       theta_to_pass.value = int(get_theta(sensor_data))
-      print(theta_to_pass.value)
+      #print(theta_to_pass.value)
     else:
       theta_to_pass.value = -1
     time.sleep(0.002)
