@@ -216,7 +216,7 @@ if __name__ == '__main__':
     #print(sensor_data)
     #sensor_data[2]=100
     spin_rate_to_pass.value=sensor_data[2]
-    if sensor_data[2]>90: #spinning fast enough
+    if sensor_data[2]>-90: #spinning fast enough
       theta_to_pass.value = int(get_theta(sensor_data))
       #print(theta)
     else:
