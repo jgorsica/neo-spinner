@@ -97,7 +97,7 @@ def get_angular_image(image_array,angle_list,led_strips):
   return angular_image
   
 def get_sensor_data(sensor):
-  ts, accel, gyro = sensor.get_sensor_data()
+  ts, accel, gyro = sensor.get_sensor_data_bare()
   return [ts,accel,-1*gyro]
   
 '''uses sensor data to determine exact angular position of the spinner'''
