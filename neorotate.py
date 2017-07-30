@@ -106,6 +106,9 @@ y_dir = 0 #trend of accel_y data
 y_prev_dir=0 #previous_trend of accel_y data
 y_prev=0 #previous accel_y_data
 prev_ts=0 #previous timestamp
+y_min=0
+y_max=0
+armed=False
 def get_theta(sensor_data):
   global prev_theta, y_dir, y_prev_dir, y_prev, prev_ts
   v=sensor_data[2] # rotational velocity dps
@@ -124,16 +127,18 @@ def get_theta(sensor_data):
   if (y-y_prev)>NOISE_THRESHOLD:
     y_dir=1
     y_prev=y
+    armed=True
   elif (y_prev-y)>NOISE_THRESHOLD:
     y_dir=-1
     y_prev=y
-  #if y<-1:
-  #  y_dir=-1
-  #else:
-  #  y_dir=1
   if (y_dir==-1 and y_prev_dir==1):
+    ymax=y
+  elif (y_dir==1 and y_prev_dir==-1):
+    ymin=y
+  if y<((ymax-ymin)/2.) and armed:
     offset=TRIM_A*v+TRIM_B
     theta=offset#(theta+offset)//2
+    armed=False
   prev_ts=ts
   y_prev_dir=y_dir
   prev_theta = theta
