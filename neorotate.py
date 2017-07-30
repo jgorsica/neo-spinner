@@ -132,10 +132,10 @@ def get_theta(sensor_data):
     y_dir=-1
     y_prev=y
   if (y_dir==-1 and y_prev_dir==1):
-    ymax=y
+    y_max=y
   elif (y_dir==1 and y_prev_dir==-1):
-    ymin=y
-  if y<((ymax-ymin)/2.) and armed:
+    y_min=y
+  if y<((y_max-y_min)/2.) and armed:
     offset=TRIM_A*v+TRIM_B
     theta=offset#(theta+offset)//2
     armed=False
