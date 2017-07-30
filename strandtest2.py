@@ -87,7 +87,7 @@ def flash(strip,color):
 			strip.setPixelColor(i,color*on)
 		strip.show()
 		on=abs(on-1)
-		time.sleep(1/1000.0)
+		#time.sleep(1/1000.0)
 
 # Main program logic follows:
 if __name__ == '__main__':
