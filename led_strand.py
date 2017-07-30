@@ -16,6 +16,7 @@ class LED_strand(object):
           self.radius_list=radius_list
           self.theta=theta
           self.brightness=brightness
+          self.pin=pin
           self.strand = Adafruit_NeoPixel(self.led_count, pin, freq, dma_channel, invert, self.brightness, channel, strip_type)
           
      def begin(self):
