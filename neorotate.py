@@ -24,7 +24,7 @@ I2C_BUS = 1
 SENSOR_ADDRESS = 0x69
 
 TRIM_A=0 #speed dependent angular offset
-TRIM_B=190 #speed independent angualr offset
+TRIM_B=200 #speed independent angualr offset
 NOISE_THRESHOLD=0.05 #accel count delta to trigger direction change
 
 def Color(red, green, blue, white = 0):
@@ -230,6 +230,6 @@ if __name__ == '__main__':
       theta_to_pass.value = int(get_theta(sensor_data))
     else:
       theta_to_pass.value = -1
-    time.sleep(0.01)
+    time.sleep(0.005)
   for process in processes:
       process.join()
