@@ -164,9 +164,9 @@ def turn_off_leds(led_strips):
 	strip.show()
 	time.sleep(2)
 	
-def update_strip(strip, pixel_colors_for_strip):
+def update_strip(strip, pixel_colors_by_angle, theta):
   for led_index in xrange(strip.get_count()):
-	strip.setPixelColor(led_index, pixel_colors_for_strip[led_index])
+	strip.setPixelColor(led_index, pixel_colors_by_angle[theta,led_index])
   strip.show()
 	
 def update_loop(strip, image_array, angle_list, theta_received, spin_rate_received):
@@ -182,15 +182,16 @@ def update_loop(strip, image_array, angle_list, theta_received, spin_rate_receiv
     pickle.dump(pixel_colors_by_angle, f)
     f.close()
   update_count = 0
+  print('starting updates...')
   while True:
     if theta_received.value >= 0: #spinning fast enough
-      pixels=pixel_colors_by_angle[theta_received.value]
+      #pixels=pixel_colors_by_angle[theta_received.value]
       #do we need a per pixel rotation offset?
       #pixels = get_pixel_colors(pixel_colors_by_angle, theta_received.value, spin_rate_received.value)
-      update_strip(strip, pixels)
-      update_count += 1
-      if update_count%100 == 0:
-        print(str(update_count) +' updates')
+      update_strip(strip, pixel_colors_by_angle, theta_received.value)
+      #update_count += 1
+      #if update_count%100 == 0:
+      #  print(str(update_count) +' updates')
     else:
 	turn_off_leds([strip])
     
