@@ -127,12 +127,12 @@ def get_theta(sensor_data):
   if (y-y_prev)>NOISE_THRESHOLD:
     y_dir=1
     y_prev=y
-    armed=True
   elif (y_prev-y)>NOISE_THRESHOLD:
     y_dir=-1
     y_prev=y
   if (y_dir==-1 and y_prev_dir==1):
     y_max=y
+    armed=True
   elif (y_dir==1 and y_prev_dir==-1):
     y_min=y
   if y<((y_max-y_min)/2.) and armed:
