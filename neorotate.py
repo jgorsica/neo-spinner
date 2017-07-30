@@ -121,12 +121,16 @@ def get_theta(sensor_data):
     theta -= 360
   while theta<0:
     theta += 360
-  if (y-y_prev)>NOISE_THRESHOLD:
-    y_dir=1
-    y_prev=y
-  elif (y_prev-y)>NOISE_THRESHOLD:
+  #if (y-y_prev)>NOISE_THRESHOLD:
+  #  y_dir=1
+  #  y_prev=y
+  #elif (y_prev-y)>NOISE_THRESHOLD:
+  #  y_dir=-1
+  #  y_prev=y
+  if y<-1:
     y_dir=-1
-    y_prev=y
+  else:
+    y_dir=1
   if (y_dir==-1 and y_prev_dir==1):
     offset=TRIM_A*v+TRIM_B
     theta=(theta+offset)//2
