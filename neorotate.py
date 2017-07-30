@@ -230,6 +230,6 @@ if __name__ == '__main__':
       theta_to_pass.value = int(get_theta(sensor_data))
     else:
       theta_to_pass.value = -1
-    time.sleep(0.005)
+    time.sleep(0.05)
   for process in processes:
       process.join()
