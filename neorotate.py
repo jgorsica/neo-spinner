@@ -97,8 +97,8 @@ def get_angular_image(image_array,angle_list,led_strips):
   return angular_image
   
 def get_sensor_data(sensor):
-  ts, accel, gyro, _ = sensor.get_sensor_data()
-  return [ts,accel[1],-1*gyro[2]]
+  ts, accel, gyro = sensor.get_sensor_data()
+  return [ts,accel,-1*gyro]
   
 '''uses sensor data to determine exact angular position of the spinner'''
 prev_theta = 0 #angle of rotation, 0 = up
@@ -226,7 +226,7 @@ if __name__ == '__main__':
     sensor_data = get_sensor_data(sensor)
     #print(sensor_data)
     spin_rate_to_pass.value=sensor_data[2]
-    if abs(sensor_data[2]>5): #spinning fast enough
+    if abs(sensor_data[2])>5: #spinning fast enough
       theta_to_pass.value = int(get_theta(sensor_data))
     else:
       theta_to_pass.value = -1
