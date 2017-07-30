@@ -110,7 +110,7 @@ y_min=0
 y_max=0
 armed=False
 def get_theta(sensor_data):
-  global prev_theta, y_dir, y_prev_dir, y_prev, prev_ts
+  global prev_theta, y_dir, y_prev_dir, y_prev, prev_ts, y_min, y_max, armed
   v=sensor_data[2] # rotational velocity dps
   y=sensor_data[1] # accel_y in integer counts
   ts=sensor_data[0]
