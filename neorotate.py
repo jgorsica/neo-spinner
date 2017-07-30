@@ -183,8 +183,7 @@ def update_loop(strip, image_array, angle_list, theta_received, spin_rate_receiv
     f.close()
   update_count = 0
   while True:
-    if theta_received.value >= -1000000: #spinning fast enough
-      #print(theta_received.value)
+    if theta_received.value >= 0: #spinning fast enough
       pixels=pixel_colors_by_angle[theta_received.value]
       #do we need a per pixel rotation offset?
       #pixels = get_pixel_colors(pixel_colors_by_angle, theta_received.value, spin_rate_received.value)
@@ -221,22 +220,15 @@ if __name__ == '__main__':
     new_process=Process(target=update_loop,args=(led_strips[strip_index], image_array, angle_list, theta_to_pass, spin_rate_to_pass))
     processes.append(new_process)
     new_process.start()
-  accel_buffer = []
   #start loop to get new sensor data, compute angle of rotation, and update other processes
   while True:
     sensor_data = get_sensor_data(sensor)
-    #accel_buffer.append(sensor_data[1])
-    #if len(accel_buffer) == 200:
-    #  print(accel_buffer)
-    #  accel_buffer=[]
     #print(sensor_data)
-    #sensor_data[2]=100
     spin_rate_to_pass.value=sensor_data[2]
-    if sensor_data[2]>-900: #spinning fast enough
+    if abs(sensor_data[2]>5): #spinning fast enough
       theta_to_pass.value = int(get_theta(sensor_data))
-      #print(theta_to_pass.value)
     else:
       theta_to_pass.value = -1
-    time.sleep(0.002)
+    time.sleep(0.001)
   for process in processes:
       process.join()
