@@ -119,6 +119,8 @@ def get_theta(sensor_data):
   theta = prev_theta + v*(ts-prev_ts)
   while theta>=360:
     theta -= 360
+  while theta<0:
+    theta += 360
   if (y-y_prev)>NOISE_THRESHOLD:
     y_dir=1
     y_prev=y
@@ -172,7 +174,7 @@ def update_loop(strip, image_array, angle_list, theta_received, spin_rate_receiv
     f.close()
   update_count = 0
   while True:
-    if theta_received.value >= 0: #spinning fast enough
+    if theta_received.value >= -1000000: #spinning fast enough
       #print(theta_received.value)
       pixels=pixel_colors_by_angle[theta_received.value]
       #do we need a per pixel rotation offset?
