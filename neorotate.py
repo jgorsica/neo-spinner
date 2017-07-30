@@ -9,14 +9,14 @@ from icm_20601 import ICM_20601
 
 # LED strip configuration:
 LED_COUNT_1      = 144      # Number of LED pixels.
-LED_PIN_1        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
-LED_DMA_1        = 14       # DMA channel to use for generating signal (try 5)
+LED_PIN_1        = 21      # GPIO pin connected to the pixels (18 uses PWM!).
+LED_DMA_1        = 13       # DMA channel to use for generating signal (try 5)
 LED_ANGLE_1 = 0
 
-LED_COUNT_2      = 144      # Number of LED pixels.
-LED_PIN_2        = 21      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
-LED_DMA_2       = 13       # DMA channel to use for generating signal (try 5)
-LED_ANGLE_2 = 90
+LED_COUNT_2      = 142      # Number of LED pixels.
+LED_PIN_2        = 18      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
+LED_DMA_2       = 14       # DMA channel to use for generating signal (try 5)
+LED_ANGLE_2 = 270
 
 I2C_BUS = 1
 SENSOR_ADDRESS = 0x69
