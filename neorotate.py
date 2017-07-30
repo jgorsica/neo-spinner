@@ -25,7 +25,7 @@ SENSOR_ADDRESS = 0x69
 
 TRIM_A=0 #speed dependent angular offset
 TRIM_B=0 #speed independent angualr offset
-NOISE_THRESHOLD=0.2 #accel count delta to trigger direction change
+NOISE_THRESHOLD=0.05 #accel count delta to trigger direction change
 
 def Color(red, green, blue, white = 0):
 	"""Convert the provided red, green, blue color to a 24-bit color value.
@@ -121,16 +121,16 @@ def get_theta(sensor_data):
     theta -= 360
   while theta<0:
     theta += 360
-  #if (y-y_prev)>NOISE_THRESHOLD:
-  #  y_dir=1
-  #  y_prev=y
-  #elif (y_prev-y)>NOISE_THRESHOLD:
-  #  y_dir=-1
-  #  y_prev=y
-  if y<-1:
-    y_dir=-1
-  else:
+  if (y-y_prev)>NOISE_THRESHOLD:
     y_dir=1
+    y_prev=y
+  elif (y_prev-y)>NOISE_THRESHOLD:
+    y_dir=-1
+    y_prev=y
+  #if y<-1:
+  #  y_dir=-1
+  #else:
+  #  y_dir=1
   if (y_dir==-1 and y_prev_dir==1):
     offset=TRIM_A*v+TRIM_B
     theta=offset#(theta+offset)//2
