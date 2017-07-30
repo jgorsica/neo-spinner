@@ -24,7 +24,7 @@ I2C_BUS = 1
 SENSOR_ADDRESS = 0x69
 
 TRIM_A=0 #speed dependent angular offset
-TRIM_B=200 #speed independent angualr offset
+TRIM_B=20 #speed independent angualr offset
 NOISE_THRESHOLD=0.05 #accel count delta to trigger direction change
 
 def Color(red, green, blue, white = 0):
