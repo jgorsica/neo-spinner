@@ -69,8 +69,8 @@ def get_angular_image(image_array,angle_list,led_strips):
       radius = candidate
   for strip_index in xrange(len(led_strips)):
     for theta in angle_list:
-      cos_t = math.cos(theta*math.pi/180.+led_strips[strip_index].get_theta())
-      sin_t = math.sin(theta*math.pi/180.+led_strips[strip_index].get_theta())
+      cos_t = math.cos((theta+led_strips[strip_index].get_theta())*math.pi/180.)
+      sin_t = math.sin((theta+led_strips[strip_index].get_theta())*math.pi/180.)
       for led_index in xrange(led_strips[strip_index].get_count()):
         led_radius = led_strips[strip_index].get_radius_list()[led_index]
         x_r = led_radius * sin_t
