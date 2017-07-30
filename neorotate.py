@@ -215,7 +215,7 @@ if __name__ == '__main__':
   #start loop to get new sensor data, compute angle of rotation, and update other processes
   while True:
     sensor_data = get_sensor_data(sensor)
-    #print(sensor_data)
+    print(sensor_data)
     #sensor_data[2]=100
     spin_rate_to_pass.value=sensor_data[2]
     if sensor_data[2]>-900: #spinning fast enough
