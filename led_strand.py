@@ -8,7 +8,7 @@ class LED_strand(object):
      LED_BRIGHTNESS = 16     # Set to 0 for darkest and 255 for brightest
      LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
      LED_CHANNEL    = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
-     LED_STRIP      = ws.WS2811_STRIP_RGB   # Strip type and colour ordering
+     LED_STRIP      = ws.WS2811_STRIP_GRB   # Strip type and colour ordering
      
      def __init__(self, led_count=10, pin=21, dma_channel=5, theta=0, radius_list=None, freq=LED_FREQ_HZ, \
                  invert=LED_INVERT, brightness=LED_BRIGHTNESS, channel=LED_CHANNEL, strip_type=LED_STRIP):
