@@ -56,50 +56,44 @@ def getImageArray(image_file, width, height):
 
 #takes image pixel array and parameters describing physical LED strip configuration, 
 #produces a precalculated array for each strip at each angle
-def get_angular_image(filename,image_array,angle_list,led_strips):
-  fname = filename+"_"+str(led_strips[0].pin)+'.p'
+def get_angular_image(filename,image_array,angle_list,strip):
+  fname = filename+"_"+str(strip.pin)+'.p'
   if os.path.isfile(fname) :
     f = open(fname, 'r')
     angular_image = pickle.load(f)
     f.close()
   else:
-    longest_strip_length = 0
-    for strip in led_strips:
-      if strip.get_count()>longest_strip_length:
-        longest_strip_length = strip.get_count()
-    angular_image=np.zeros((len(led_strips),len(angle_list),longest_strip_length), dtype=np.int)
+    angular_image=np.zeros((len(angle_list),strip.get_count()), dtype=np.int)
     radius = 0
-    for strip in led_strips:
-      candidate = max([abs(x) for x in strip.get_radius_list()])
-      if candidate > radius:
-        radius = candidate
-    for strip_index in xrange(len(led_strips)):
-      for theta in angle_list:
-        cos_t = math.cos((theta+led_strips[strip_index].get_theta())*math.pi/180.)
-        sin_t = math.sin((theta+led_strips[strip_index].get_theta())*math.pi/180.)
-        for led_index in xrange(led_strips[strip_index].get_count()):
-          led_radius = led_strips[strip_index].get_radius_list()[led_index]
-          x_r = led_radius * sin_t
-          y_r = led_radius * cos_t
-          #change is image coordinate system
-          x = x_r + radius
-          y = radius - y_r
-          x1 = int(x)
-          x2 = x1+1
-          if x2 == image_array.shape[0]:
-            x2 = x1
-          y2 = int(y)
-          y1 = y2+1
-          if y1 == image_array.shape[1]:
-            y1 = y2
-          #get four closest pixels and bilaterally interpolate
-          p11=image_array[x1,y1]
-          p21=image_array[x2,y1]
-          p12=image_array[x1,y2]
-          p22=image_array[x2,y2]
-          p=(y-y2)*(x-x1)*p21+(x2-x)*(y-y2)*p11+(y1-y)*(x-x1)*p22+(x2-x)*(y1-y)*p12
-          color=Color(int(p[0]),int(p[1]),int(p[2]))
-          angular_image[strip_index,theta,led_index]=color
+    candidate = max([abs(x) for x in strip.get_radius_list()])
+    if candidate > radius:
+      radius = candidate
+    for theta in angle_list:
+      cos_t = math.cos((theta+strip.get_theta())*math.pi/180.)
+      sin_t = math.sin((theta+strip.get_theta())*math.pi/180.)
+      for led_index in xrange(strip.get_count()):
+        led_radius = strip.get_radius_list()[led_index]
+        x_r = led_radius * cos_t
+        y_r = led_radius * sin_t
+        #change is image coordinate system
+        x = x_r + radius
+        y = radius - y_r
+        x1 = int(x)
+        x2 = x1+1
+        if x2 == image_array.shape[0]:
+          x2 = x1
+        y2 = int(y)
+        y1 = y2+1
+        if y1 == image_array.shape[1]:
+          y1 = y2
+        #get four closest pixels and bilaterally interpolate
+        p11=image_array[x1,y1]
+        p21=image_array[x2,y1]
+        p12=image_array[x1,y2]
+        p22=image_array[x2,y2]
+        p=(y-y2)*(x-x1)*p21+(x2-x)*(y-y2)*p11+(y1-y)*(x-x1)*p22+(x2-x)*(y1-y)*p12
+        color=Color(int(p[0]),int(p[1]),int(p[2]))
+        angular_image[theta,led_index]=color
     f = open(fname, 'w')
     pickle.dump(angular_image, f)
     f.close()
@@ -180,7 +174,7 @@ def update_strip(strip, pixel_colors_by_angle, theta):
 	
 def update_loop(strip, image_filename, image_array, angle_list, theta_received, spin_rate_received):
   print('getting angular image...')
-  pixel_colors_by_angle = get_angular_image(image_filename,image_array,angle_list,[strip])[0]
+  pixel_colors_by_angle = get_angular_image(image_filename,image_array,angle_list,strip)
   update_count = 0
   print('starting updates...')
   while True:
