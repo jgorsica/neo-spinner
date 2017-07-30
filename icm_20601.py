@@ -90,3 +90,15 @@ class ICM_20601(object):
                     gyro_data[i] -= self.GYRO_RANGE
           #print(str(accel_data)+','+str(temp_data)+','+str(gyro_data))
           return timestamp, accel_data, gyro_data, temp_data
+     
+     def get_sensor_data_bare(self):
+          timestamp=time.time()
+          data=self.read_bytes(self.SENSOR_OUT_14_BYTE_REG, 14)
+          accel_data=((data[2]<<8)|data[3]) * self.ACCEL_SCALE
+          if accel_data>self.ACCEL_RANGE/2:
+               accel_data -= self.ACCEL_RANGE
+          gyro_data=((data[12]<<8)|data[13]) * self.GYRO_SCALE
+          if gyro_data > self.GYRO_RANGE/2:
+               gyro_data -= self.GYRO_RANGE
+          #print(str(accel_data)+','+str(temp_data)+','+str(gyro_data))
+          return timestamp, accel_data, gyro_data
