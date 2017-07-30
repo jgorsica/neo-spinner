@@ -224,7 +224,7 @@ if __name__ == '__main__':
     #if len(accel_buffer) == 200:
     #  print(accel_buffer)
     #  accel_buffer=[]
-    print(sensor_data)
+    #print(sensor_data)
     #sensor_data[2]=100
     spin_rate_to_pass.value=sensor_data[2]
     if sensor_data[2]>-900: #spinning fast enough
