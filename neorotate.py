@@ -14,11 +14,13 @@ from icm_20601 import ICM_20601
 LED_COUNT_1      = 144      # Number of LED pixels.
 LED_PIN_1        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
 LED_DMA_1        = 13       # DMA channel to use for generating signal (try 5)
+LED_CHANNEL_1    = 0
 LED_ANGLE_1 = 0
 
 LED_COUNT_2      = 142      # Number of LED pixels.
 LED_PIN_2        = 21      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
 LED_DMA_2       = 14       # DMA channel to use for generating signal (try 5)
+LED_CHANNEL_2   = 1
 LED_ANGLE_2 = 270
 
 I2C_BUS = 1
@@ -201,10 +203,10 @@ if __name__ == '__main__':
   '''initialize strands'''
   #evenly spaced even number of LEDs
   radius_list_1=np.linspace((LED_COUNT_1-1)/2.,-1*((LED_COUNT_1-1)/2.),LED_COUNT_1).tolist()
-  strip1 = LED_strand(LED_COUNT_1, LED_PIN_1, LED_DMA_1, LED_ANGLE_1, radius_list_1)
+  strip1 = LED_strand(LED_COUNT_1, LED_PIN_1, LED_DMA_1, LED_ANGLE_1, radius_list_1, channel=LED_CHANNEL_1)
   #evenly spaced even number of LEDs with 1 LED gap in middle
   radius_list_2=np.linspace((LED_COUNT_2/2.),1,LED_COUNT_2/2).tolist() + np.linspace(-1,-1*(LED_COUNT_2/2.),LED_COUNT_2/2).tolist()
-  strip2 = LED_strand(LED_COUNT_2, LED_PIN_2, LED_DMA_2, LED_ANGLE_2, radius_list_2)
+  strip2 = LED_strand(LED_COUNT_2, LED_PIN_2, LED_DMA_2, LED_ANGLE_2, radius_list_2, channel=LED_CHANNEL_2)
   strip1.begin()
   strip2.begin()
   print('strands initialized')
