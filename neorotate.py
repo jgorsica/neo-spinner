@@ -119,9 +119,10 @@ y_max=0
 armed=False
 def get_theta(sensor_data):
   global prev_theta, y_dir, y_prev_dir, y_prev, prev_ts, y_min, y_max, armed
-  v=sensor_data[2] # rotational velocity dps
-  y=sensor_data[1] # accel_y in integer counts
-  ts=sensor_data[0]
+  v=sensor_data[2] # rotational velocity, degrees per second in clockwise direction
+  y=sensor_data[1] # accel_y in g's
+  ts=sensor_data[0] # timestamp in seconds
+  # If long time between updates, reset everything
   if (ts-prev_ts) > 5:
     prev_ts = ts
     y_prev = y
@@ -132,20 +133,33 @@ def get_theta(sensor_data):
     theta -= 360
   while theta<0:
     theta += 360
+  # Use accelerometer data track gravity rotation, mark top and bottom of rotation
   if (y-y_prev)>NOISE_THRESHOLD:
-    y_dir=1
+    y_dir=1 #up
     y_prev=y
   elif (y_prev-y)>NOISE_THRESHOLD:
-    y_dir=-1
+    y_dir=-1 #down
     y_prev=y
-  if (y_dir==-1 and y_prev_dir==1):
+  if (y_dir==-1 and y_prev_dir==1): #top
     y_max=y
     armed=True
-  elif (y_dir==1 and y_prev_dir==-1):
+  elif (y_dir==1 and y_prev_dir==-1): #bottom
     y_min=y
-  if y<((y_max-y_min)/2.) and armed:
+  # Use event of passing point between top and bottom as trigger to reset theta
+  if y<((y_max-y_min)/2.) and armed: #right side
     offset=TRIM_A*v+TRIM_B
-    theta=offset#(theta+offset)//2
+    if (abs(theta-offset)<=180:
+      theta=(theta+offset)//2
+    elif (theta-offset)>180:
+      theta-=360
+      theta=(theta+offset)//2
+      if theta<0:
+        theta += 360
+    else:
+      offset-=360
+      theta=(theta+offset)//2
+      if theta<0:
+        theta += 360
     armed=False
   prev_ts=ts
   y_prev_dir=y_dir
