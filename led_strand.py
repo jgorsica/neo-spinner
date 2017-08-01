@@ -36,3 +36,6 @@ class LED_strand(object):
      
      def get_radius_list(self):
           return self.radius_list
+     
+     def get_radius(self, index)
+          return self.radius_list[index]
