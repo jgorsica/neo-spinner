@@ -230,8 +230,6 @@ if __name__ == '__main__':
   led_strips = [strip1,strip2]
   angle_list = xrange(0,360,1) #used as array index, so not easily changed
   print('getting image array...')
-  #image_filename='clock.jpg'
-  #image_filename= 'colors.png'
   image_filename = sys.argv[1]
   image_array = getImageArray(image_filename, LED_COUNT_1, LED_COUNT_1)
   #create variables in shared memory to pass new theta and spin rate values to processes running update loops
@@ -252,6 +250,6 @@ if __name__ == '__main__':
       theta_to_pass.value = get_theta(sensor_data)
     else:
       theta_to_pass.value = -1
-    #time.sleep(1)
+    time.sleep(0.001)
   for process in processes:
       process.join()
