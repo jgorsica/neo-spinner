@@ -94,9 +94,10 @@ def get_angular_image(filename,image_array,angle_list,strip):
           p12=image_array[x1,y2]
           p22=image_array[x2,y2]
           p=(y-y2)*(x-x1)*p21+(x2-x)*(y-y2)*p11+(y1-y)*(x-x1)*p22+(x2-x)*(y1-y)*p12
+          color=Color(int(p[0]),int(p[1]),int(p[2]))
         else: #lowest neighbor
           p=image_array[x1,y2]
-        color=Color(int(p[0]),int(p[1]),int(p[2]))
+          color=Color(p[0],p[1],p[2])
         angular_image[theta,led_index]=color
     f = open(fname, 'w')
     pickle.dump(angular_image, f)
