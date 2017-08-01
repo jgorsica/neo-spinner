@@ -12,23 +12,23 @@ from icm_20601 import ICM_20601
 
 # LED strip configuration:
 LED_COUNT_1      = 144      # Number of LED pixels.
-LED_PIN_1        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
-LED_DMA_1        = 13       # DMA channel to use for generating signal (try 5)
-LED_CHANNEL_1    = 0
-LED_ANGLE_1 = 0
+LED_PIN_1        = 18       # GPIO pin connected to the pixels (18 uses PWM).
+LED_DMA_1        = 13       # DMA channel to use for generating signal
+LED_CHANNEL_1    = 0        # PWM channel used
+LED_ANGLE_1      = 0        # Relative angle between heads of LED strands
 
 LED_COUNT_2      = 142      # Number of LED pixels.
-LED_PIN_2        = 21      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
-LED_DMA_2       = 14       # DMA channel to use for generating signal (try 5)
-LED_CHANNEL_2   = 0
-LED_ANGLE_2 = 270
+LED_PIN_2        = 21       # GPIO pin connected to the pixels (21 uses SPI).
+LED_DMA_2        = 14       # DMA channel to use for generating signal
+LED_CHANNEL_2    = 0        # PWM channel, not used because SPI
+LED_ANGLE_2      = 270      # Relative angle between heads of LED strands
 
-I2C_BUS = 1
-SENSOR_ADDRESS = 0x69
+I2C_BUS          = 1        # I2C bus that has motion sensor attached
+SENSOR_ADDRESS   = 0x69     # I2C address of motion sensor (depends on how ADDRESS0 pin is connected)
 
-TRIM_A=0 #speed dependent angular offset
-TRIM_B=82 #speed independent angualr offset
-NOISE_THRESHOLD=0.1 #accel count delta to trigger direction change
+TRIM_A           = 0        # Speed dependent angular error
+TRIM_B           = 82       # Speed independent angular offset
+NOISE_THRESHOLD  = 0.1      # Accel hysteresis (in g's), must be overcome at top and bottom of rotation
 
 def Color(red, green, blue, white = 0):
 	"""Convert the provided red, green, blue color to a 24-bit color value.
