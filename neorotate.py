@@ -165,37 +165,28 @@ def get_theta(sensor_data):
   y_prev_dir=y_dir
   prev_theta = theta
   return int(theta)
-  
-#returns lists for pixel colors for each LED in each strip based on the angular position of the LED
-#at the time it receives its color command
-def get_pixel_colors(pixel_colors_by_angle, theta, spin_rate):
-  angular_pixel_delay = 0.00003 * spin_rate
-  pixel_colors=np.zeros((angular_image.shape[1]),dtype=np.int)
-  for led_index in xrange(angular_image.shape[1]):
-    pixel_theta = int(theta + led_index * angular_pixel_delay)
-    while pixel_theta >= 360:
-      pixel_theta -= 360
-    pixel_color = pixel_colors_by_angle[pixel_theta,led_index]
-    pixel_colors[led_index]=pixel_color
-  return pixel_colors
 
 def turn_off_leds(led_strips):
   for strip in led_strips:
 	for led_index in xrange(strip.get_count()):
 		strip.setPixelColor(led_index, 0)
 	strip.show()
-	time.sleep(2)
 	
-def update_strip(strip, pixel_colors_by_angle, theta):
-  #time1=time.time()
-  pixels_at_angle = pixel_colors_by_angle[theta]
-  strip.setPixelColor(slice(0,strip.get_count()),pixels_at_angle)
-  #for led_index in xrange(strip.get_count()):
-  #  strip.setPixelColor(led_index, pixels_at_angle[led_index])
-  #time2=time.time()
+def update_strip(strip, pixel_colors_by_angle, theta, spin_rate):
+  time1=time.time()
+  count=strip.get_count()
+  #pixel_updates_per_degree = min(int(1/0.00003/spin_rate),count)
+  pixel_updates_per_degree = count
+  for offset in xrange(int((count-1)//pixel_updates_per_degree+1)):
+    new_theta=theta+offset
+    if new_theta >= 360:
+      new_theta -= 360
+    pixels_at_angle = pixel_colors_by_angle[new_theta]
+    strip.setPixelColor(slice(pixel_updates_per_degree*offset,min(count,pixel_updates_per_degree*offset+1)),pixels_at_angle)
+  time2=time.time()
   strip.show()
-  #time3=time.time()
-  #print("time setting pixels: "+str(time2-time1)+" seconds, time to show: "+str(time3-time2)+" seconds")
+  time3=time.time()
+  print("time setting pixels: "+str(time2-time1)+" seconds, time to show: "+str(time3-time2)+" seconds")
 	
 def update_loop(strip, image_filename, image_array, angle_list, theta_received, spin_rate_received, stop_request_received):
   print('getting angular image...')
@@ -205,7 +196,7 @@ def update_loop(strip, image_filename, image_array, angle_list, theta_received, 
   while stop_request_received.value==0:
     #do we need a per pixel rotation offset?
     #pixels = get_pixel_colors(pixel_colors_by_angle, theta_received.value, spin_rate_received.value)
-    update_strip(strip, pixel_colors_by_angle, theta_received.value)
+    update_strip(strip, pixel_colors_by_angle, theta_received.value, spin_rate_received.value)
   turn_off_leds([strip])
     
   
