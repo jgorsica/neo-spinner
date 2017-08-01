@@ -30,14 +30,11 @@ TRIM_A           = 0        # Speed dependent angular error
 TRIM_B           = 82       # Speed independent angular offset
 NOISE_THRESHOLD  = 0.1      # Accel hysteresis (in g's), must be overcome at top and bottom of rotation
 
-def Color(red, green, blue, white = 0):
-	"""Convert the provided red, green, blue color to a 24-bit color value.
-	Each color component should be a value 0-255 where 0 is the lowest intensity
-	and 255 is the highest intensity.
-	"""
+'''Convert the provided red, green, blue color to a 24-bit color value.'''
+def Color(red, green, blue, white = 0
 	return (white << 24) | (red << 16)| (green << 8) | blue
 
-#takes image file and produces array of RGBA pixel values for black padded, alpha blended image of correct size
+'''takes image file and produces array of RGBA pixel values for black padded, alpha blended image of correct size'''
 def getImageArray(image_file, width, height):
 	im = Image.open(image_file).convert('RGBA')
 	im.thumbnail([height,width],Image.ANTIALIAS)
@@ -47,9 +44,6 @@ def getImageArray(image_file, width, height):
 	paste_y_offset = (height-(im_height))//2
 	paste_region = (paste_x_offset,paste_y_offset,paste_x_offset+im_width-1, \
 			paste_y_offset+im_height-1)
-	#print (im.size)
-	#print (paste_region)
-	#print (padded_thumb.size)
 	padded_thumb.paste(im, (paste_x_offset,paste_y_offset))
 	background = Image.new('RGBA',[height,width],(0,0,0))
 	alpha_composite = Image.alpha_composite(background,padded_thumb)
@@ -57,9 +51,10 @@ def getImageArray(image_file, width, height):
 	arr=np.array(alpha_composite)
 	return arr[:,:,0:3]
 
-#takes image pixel array and parameters describing physical LED strip configuration, 
-#produces a precalculated array for each strip at each angle
+'''Takes image pixel array and parameters describing physical LED strip configuration, 
+      produces a precalculated array for each strip at each angle'''
 def get_angular_image(filename,image_array,angle_list,strip):
+  #Use pickle file if exists from previous use, otherwise generate new angular image
   fname = filename+"_"+str(strip.pin)+'.p'
   if os.path.isfile(fname) :
     f = open(fname, 'r')
@@ -67,10 +62,7 @@ def get_angular_image(filename,image_array,angle_list,strip):
     f.close()
   else:
     angular_image=np.zeros((len(angle_list),strip.get_count()), dtype=np.int)
-    radius = 0
-    candidate = max([abs(x) for x in strip.get_radius_list()])
-    if candidate > radius:
-      radius = candidate
+    radius = max([abs(x) for x in strip.get_radius_list()])
     for theta in angle_list:
       cos_t = math.cos((theta+strip.get_theta())*math.pi/180.)
       sin_t = math.sin((theta+strip.get_theta())*math.pi/180.)
