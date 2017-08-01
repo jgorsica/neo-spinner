@@ -28,7 +28,7 @@ SENSOR_ADDRESS = 0x69
 
 TRIM_A=0 #speed dependent angular offset
 TRIM_B=82 #speed independent angualr offset
-NOISE_THRESHOLD=0.05 #accel count delta to trigger direction change
+NOISE_THRESHOLD=0.1 #accel count delta to trigger direction change
 
 def Color(red, green, blue, white = 0):
 	"""Convert the provided red, green, blue color to a 24-bit color value.
