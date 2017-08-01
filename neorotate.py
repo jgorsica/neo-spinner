@@ -62,12 +62,14 @@ def get_angular_image(filename,image_array,angle_list,strip):
     f.close()
   else:
     angular_image=np.zeros((len(angle_list),strip.get_count()), dtype=np.int)
+    #find largest radius to map to edge of square image
     radius = max([abs(x) for x in strip.get_radius_list()])
     for theta in angle_list:
+      #strand angular offset applied here, so that strands can use common theta reference
       cos_t = math.cos((theta+strip.get_theta())*math.pi/180.)
       sin_t = math.sin((theta+strip.get_theta())*math.pi/180.)
       for led_index in xrange(strip.get_count()):
-        led_radius = strip.get_radius_list()[led_index]
+        led_radius = strip.get_radius(led_index)
         x_r = led_radius * cos_t
         y_r = led_radius * sin_t
         #change is image coordinate system
