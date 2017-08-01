@@ -19,7 +19,7 @@ LED_ANGLE_1 = 0
 
 LED_COUNT_2      = 142      # Number of LED pixels.
 LED_PIN_2        = 21      # GPIO pin connected to the pixels (10 uses SPI /dev/spidev0.0).
-LED_DMA_2       = 12       # DMA channel to use for generating signal (try 5)
+LED_DMA_2       = 14       # DMA channel to use for generating signal (try 5)
 LED_CHANNEL_2   = 0
 LED_ANGLE_2 = 270
 
