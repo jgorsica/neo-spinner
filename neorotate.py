@@ -220,7 +220,7 @@ if __name__ == '__main__':
   #create variables in shared memory to pass new theta and spin rate values to processes running update loops
   theta_to_pass = Value('i', 0)
   spin_rate_to_pass = Value('d',0)
-  stop_request_to_pass = value('i',0)
+  stop_request_to_pass = Value('i',0)
   print ('Starting process for each strand, Press Ctrl-C to quit.')
   processes=[]
   for strand_index in xrange(len(led_strands)):
