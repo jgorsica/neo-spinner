@@ -171,15 +171,15 @@ def turn_off_leds(led_strips):
 	time.sleep(2)
 	
 def update_strip(strip, pixel_colors_by_angle, theta):
-  time1=time.time()
+  #time1=time.time()
   pixels_at_angle = pixel_colors_by_angle[theta]
   strip.setPixelColor(slice(0,strip.get_count()),pixels_at_angle)
   #for led_index in xrange(strip.get_count()):
   #  strip.setPixelColor(led_index, pixels_at_angle[led_index])
-  time2=time.time()
+  #time2=time.time()
   strip.show()
-  time3=time.time()
-  print("time setting pixels: "+str(time2-time1)+" seconds, time to show: "+str(time3-time2)+" seconds")
+  #time3=time.time()
+  #print("time setting pixels: "+str(time2-time1)+" seconds, time to show: "+str(time3-time2)+" seconds")
 	
 def update_loop(strip, image_filename, image_array, angle_list, theta_received, spin_rate_received):
   print('getting angular image...')
