@@ -170,8 +170,9 @@ def turn_off_leds(led_strips):
 	
 def update_strip(strip, pixel_colors_by_angle, theta):
   time1=time.time()
+  pixels_at_angle = pixel_colors_by_angle[theta]
   for led_index in xrange(strip.get_count()):
-	strip.setPixelColor(led_index, pixel_colors_by_angle[theta,led_index])
+	strip.setPixelColor(led_index, pixels_at_angle[led_index])
   time2=time.time()
   strip.show()
   time3=time.time()
