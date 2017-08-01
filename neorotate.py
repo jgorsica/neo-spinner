@@ -148,7 +148,7 @@ def get_theta(sensor_data):
   # Use event of passing point between top and bottom as trigger to reset theta
   if y<((y_max-y_min)/2.) and armed: #right side
     offset=TRIM_A*v+TRIM_B
-    if (abs(theta-offset)<=180:
+    if abs(theta-offset)<=180:
       theta=theta*0.7+offset*0.3
     elif (theta-offset)>180:
       theta-=360
