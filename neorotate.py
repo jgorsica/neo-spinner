@@ -30,6 +30,8 @@ TRIM_A           = 0        # Speed dependent angular error
 TRIM_B           = 82       # Speed independent angular offset
 NOISE_THRESHOLD  = 0.1      # Accel hysteresis (in g's), must be overcome at top and bottom of rotation
 
+BILATERAL_INTERPOLATION = False    # When resampling image, use bilateral interpolation, otherwise lowest neighbor
+
 '''Convert the provided red, green, blue color to a 24-bit color value.'''
 def Color(red, green, blue, white = 0
 	return (white << 24) | (red << 16)| (green << 8) | blue
@@ -64,15 +66,17 @@ def get_angular_image(filename,image_array,angle_list,strip):
     angular_image=np.zeros((len(angle_list),strip.get_count()), dtype=np.int)
     #find largest radius to map to edge of square image
     radius = max([abs(x) for x in strip.get_radius_list()])
+    RAD2DEG = math.pi/180.
+    led_count = strip.get_count()
     for theta in angle_list:
       #strand angular offset applied here, so that strands can use common theta reference
-      cos_t = math.cos((theta+strip.get_theta())*math.pi/180.)
-      sin_t = math.sin((theta+strip.get_theta())*math.pi/180.)
-      for led_index in xrange(strip.get_count()):
+      cos_t = math.cos((theta+strip.get_theta())*RAD2DEG)
+      sin_t = math.sin((theta+strip.get_theta())*RAD2DEG)
+      for led_index in xrange(led_count):
         led_radius = strip.get_radius(led_index)
         x_r = led_radius * cos_t
         y_r = led_radius * sin_t
-        #change is image coordinate system
+        #change origin from center to upper left
         x = x_r + radius
         y = radius - y_r
         x1 = int(x)
@@ -83,12 +87,15 @@ def get_angular_image(filename,image_array,angle_list,strip):
         y1 = y2+1
         if y1 == image_array.shape[1]:
           y1 = y2
-        #get four closest pixels and bilaterally interpolate
-        p11=image_array[x1,y1]
-        p21=image_array[x2,y1]
-        p12=image_array[x1,y2]
-        p22=image_array[x2,y2]
-        p=(y-y2)*(x-x1)*p21+(x2-x)*(y-y2)*p11+(y1-y)*(x-x1)*p22+(x2-x)*(y1-y)*p12
+        if BILATERAL_INTERPOLATION:
+          #get four closest pixels and bilaterally interpolate
+          p11=image_array[x1,y1]
+          p21=image_array[x2,y1]
+          p12=image_array[x1,y2]
+          p22=image_array[x2,y2]
+          p=(y-y2)*(x-x1)*p21+(x2-x)*(y-y2)*p11+(y1-y)*(x-x1)*p22+(x2-x)*(y1-y)*p12
+        else: #lowest neighbor
+          p=image_array[x1,y2]
         color=Color(int(p[0]),int(p[1]),int(p[2]))
         angular_image[theta,led_index]=color
     f = open(fname, 'w')
