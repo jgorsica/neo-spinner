@@ -197,21 +197,15 @@ def update_strip(strip, pixel_colors_by_angle, theta):
   #time3=time.time()
   #print("time setting pixels: "+str(time2-time1)+" seconds, time to show: "+str(time3-time2)+" seconds")
 	
-def update_loop(strip, image_filename, image_array, angle_list, theta_received, spin_rate_received):
+def update_loop(strip, image_filename, image_array, angle_list, theta_received, spin_rate_received, stop_request_received):
   print('getting angular image...')
   pixel_colors_by_angle = get_angular_image(image_filename,image_array,angle_list,strip)
   update_count = 0
   print('starting updates...')
-  while True:
-    if theta_received.value >= 0: #spinning fast enough
-      #pixels=pixel_colors_by_angle[theta_received.value]
-      #do we need a per pixel rotation offset?
-      #pixels = get_pixel_colors(pixel_colors_by_angle, theta_received.value, spin_rate_received.value)
-      update_strip(strip, pixel_colors_by_angle, theta_received.value)
-      #update_count += 1
-      #if update_count%100 == 0:
-      #  print(str(update_count) +' updates')
-    else:
+  while stop_request_received==0:
+    #do we need a per pixel rotation offset?
+    #pixels = get_pixel_colors(pixel_colors_by_angle, theta_received.value, spin_rate_received.value)
+    update_strip(strip, pixel_colors_by_angle, theta_received.value)
 	turn_off_leds([strip])
     
   
@@ -235,21 +229,23 @@ if __name__ == '__main__':
   #create variables in shared memory to pass new theta and spin rate values to processes running update loops
   theta_to_pass = Value('i', 0)
   spin_rate_to_pass = Value('d',0)
+  stop_request_to_pass = value('i',0)
   print ('Starting process for each strand, Press Ctrl-C to quit.')
   processes=[]
   for strip_index in xrange(len(led_strips)):
-    new_process=Process(target=update_loop,args=(led_strips[strip_index], image_filename, image_array, angle_list, theta_to_pass, spin_rate_to_pass))
+    new_process=Process(target=update_loop,args=(led_strips[strip_index], image_filename, image_array, angle_list, \
+                                                 theta_to_pass, spin_rate_to_pass, stop_request_to_pass))
     processes.append(new_process)
     new_process.start()
   #start loop to get new sensor data, compute angle of rotation, and update other processes
-  while True:
+  while stop_request_to_pass.value==0:
     sensor_data = get_sensor_data(sensor)
     #print(sensor_data)
     spin_rate_to_pass.value=sensor_data[2]
     if abs(sensor_data[2])>5: #spinning fast enough
       theta_to_pass.value = get_theta(sensor_data)
     else:
-      theta_to_pass.value = -1
+      stop_request_to_pass = 1
     time.sleep(0.001)
   for process in processes:
       process.join()
