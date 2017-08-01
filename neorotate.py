@@ -206,7 +206,7 @@ def update_loop(strip, image_filename, image_array, angle_list, theta_received, 
     #do we need a per pixel rotation offset?
     #pixels = get_pixel_colors(pixel_colors_by_angle, theta_received.value, spin_rate_received.value)
     update_strip(strip, pixel_colors_by_angle, theta_received.value)
-	turn_off_leds([strip])
+  turn_off_leds([strip])
     
   
 if __name__ == '__main__':
