@@ -33,7 +33,7 @@ NOISE_THRESHOLD  = 0.1      # Accel hysteresis (in g's), must be overcome at top
 BILATERAL_INTERPOLATION = False    # When resampling image, use bilateral interpolation, otherwise lowest neighbor
 
 '''Convert the provided red, green, blue color to a 24-bit color value.'''
-def Color(red, green, blue, white = 0
+def Color(red, green, blue, white = 0):
 	return (white << 24) | (red << 16)| (green << 8) | blue
 
 '''takes image file and produces array of RGBA pixel values for black padded, alpha blended image of correct size'''
