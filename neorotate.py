@@ -149,22 +149,22 @@ def get_theta(sensor_data):
   if y<((y_max-y_min)/2.) and armed: #right side
     offset=TRIM_A*v+TRIM_B
     if (abs(theta-offset)<=180:
-      theta=(theta+offset)//2
+      theta=theta*0.7+offset*0.3
     elif (theta-offset)>180:
       theta-=360
-      theta=(theta+offset)//2
+      theta=theta*0.7+offset*0.3
       if theta<0:
         theta += 360
     else:
       offset-=360
-      theta=(theta+offset)//2
+      theta=theta*0.7+offset*0.3
       if theta<0:
         theta += 360
     armed=False
   prev_ts=ts
   y_prev_dir=y_dir
   prev_theta = theta
-  return theta
+  return int(theta)
   
 #returns lists for pixel colors for each LED in each strip based on the angular position of the LED
 #at the time it receives its color command
@@ -249,7 +249,7 @@ if __name__ == '__main__':
     #print(sensor_data)
     spin_rate_to_pass.value=sensor_data[2]
     if abs(sensor_data[2])>5: #spinning fast enough
-      theta_to_pass.value = int(get_theta(sensor_data))
+      theta_to_pass.value = get_theta(sensor_data)
     else:
       theta_to_pass.value = -1
     #time.sleep(1)
