@@ -238,7 +238,7 @@ if __name__ == '__main__':
     if abs(sensor_data[2])>5: #spinning fast enough
       theta_to_pass.value = get_theta(sensor_data)
     else:
-      stop_request_to_pass = 1
+      stop_request_to_pass.value = 1
     time.sleep(0.001)
   for process in processes:
       process.join()
