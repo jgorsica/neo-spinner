@@ -175,16 +175,17 @@ def turn_off_leds(led_strands):
 def update_strand(strand, pixel_colors_by_angle, theta, spin_rate):
   time1=time.time()
   count=strand.get_count()
-  #pixel_updates_per_degree = min(int(1/0.00003/spin_rate),count)
-  pixel_updates_per_degree = count
-  pixels_at_angle = pixel_colors_by_angle[theta]
+  pixel_updates_per_degree = min(int(1/0.00003/spin_rate),count)
+  pointer=0
+  pixels_at_angle=[]
+  while pointer<count:
+    last=min(count, pointer+pixel_updates_per_degree)
+    pixels_at_angle.extend(pixel_colors_by_angle[theta,pointer:last])
+    pointer += pixel_updates_per_degree
+    theta += 1
+    if theta==360:
+      theta=0
   strand.setPixelColor(slice(0,count),pixels_at_angle)
-  #for offset in xrange(int((count-1)//pixel_updates_per_degree+1)):
-  #  new_theta=theta+offset
-  #  if new_theta >= 360:
-  #    new_theta -= 360
-  #  pixels_at_angle = pixel_colors_by_angle[new_theta]
-  #  strand.setPixelColor(slice(pixel_updates_per_degree*offset,min(count,pixel_updates_per_degree*offset+1)),pixels_at_angle)
   time2=time.time()
   strand.show()
   time3=time.time()
