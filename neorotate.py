@@ -177,6 +177,7 @@ def update_strand(strand, pixel_colors_by_angle, theta, spin_rate):
   count=strand.get_count()
   #pixel_updates_per_degree = min(int(1/0.00003/spin_rate),count)
   pixel_updates_per_degree = count
+  pixels_at_angle = pixel_colors_by_angle[theta]
   strand.setPixelColor(slice(0,count),pixels_at_angle)
   #for offset in xrange(int((count-1)//pixel_updates_per_degree+1)):
   #  new_theta=theta+offset
