@@ -27,7 +27,7 @@ I2C_BUS          = 1        # I2C bus that has motion sensor attached
 SENSOR_ADDRESS   = 0x69     # I2C address of motion sensor (depends on how ADDRESS0 pin is connected)
 
 TRIM_A           = 0        # Speed dependent angular error
-TRIM_B           = 112       # Speed independent angular offset
+TRIM_B           = 117       # Speed independent angular offset
 NOISE_THRESHOLD  = 0.1      # Accel hysteresis (in g's), must be overcome at top and bottom of rotation
 
 BILATERAL_INTERPOLATION = False    # When resampling image, use bilateral interpolation, otherwise lowest neighbor
