@@ -10,6 +10,8 @@ from multiprocessing import Process, Value
 from led_strand import LED_strand
 from icm_20601 import ICM_20601
 
+DEG2RAD = math.pi/180.
+
 # LED strand configuration:
 LED_COUNT_1      = 144      # Number of LED pixels.
 LED_PIN_1        = 18       # GPIO pin connected to the pixels (18 uses PWM).
@@ -66,12 +68,11 @@ def get_angular_image(filename,image_array,angle_list,strand):
     angular_image=np.zeros((len(angle_list),strand.get_count()), dtype=np.int)
     #find largest radius to map to edge of square image
     radius = max([abs(x) for x in strand.get_radius_list()])
-    RAD2DEG = math.pi/180.
     led_count = strand.get_count()
     for theta in angle_list:
       #strand angular offset applied here, so that strands can use common theta reference
-      cos_t = math.cos((theta+strand.get_theta())*RAD2DEG)
-      sin_t = math.sin((theta+strand.get_theta())*RAD2DEG)
+      cos_t = math.cos((theta+strand.get_theta())*DEG2RAD)
+      sin_t = math.sin((theta+strand.get_theta())*DEG2RAD)
       for led_index in xrange(led_count):
         led_radius = strand.get_radius(led_index)
         x_r = led_radius * cos_t
