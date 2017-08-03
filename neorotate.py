@@ -174,7 +174,7 @@ def turn_off_leds(led_strands):
 	strand.show()
 	
 def update_strand(strand, pixel_colors_by_angle, theta, spin_rate):
-  time1=time.time()
+  #time1=time.time()
   count=strand.get_count()
   pixel_updates_per_degree = min(int(1/0.00003/spin_rate),count)
   pointer=0
@@ -187,10 +187,10 @@ def update_strand(strand, pixel_colors_by_angle, theta, spin_rate):
     if theta==360:
       theta=0
   strand.setPixelColor(slice(0,count),pixels_at_angle)
-  time2=time.time()
+  #time2=time.time()
   strand.show()
-  time3=time.time()
-  print("time setting pixels: "+str(time2-time1)+" seconds, time to show: "+str(time3-time2)+" seconds")
+  #time3=time.time()
+  #print("time setting pixels: "+str(time2-time1)+" seconds, time to show: "+str(time3-time2)+" seconds")
 	
 def update_loop(strand, image_filename, image_array, angle_list, theta_received, spin_rate_received, stop_request_received):
   print('getting angular image...')
