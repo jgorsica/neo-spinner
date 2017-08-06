@@ -21,7 +21,7 @@ def upload_file():
 		return 'Upload Page'
 
 def show_it(filename):
-	exec(open("./neorotate.py").read(),filename)
+	start(filename)
 
 if __name__ == '__main__':
 	app.debug = False
