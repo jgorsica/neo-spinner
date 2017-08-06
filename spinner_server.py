@@ -12,10 +12,9 @@ def hello_world():
 @app.route('/upload', methods = ['GET', 'POST'])
 def upload_file():
 	if request.method == 'POST':
-		f = request.args['file']
-    		filename=request.args['filename']
-		f.save(filename)
-		show_it(filename)
+		f = request.files['file']
+		f.save(f.filename)
+		show_it(f.filename)
 		return '200'
 	else:
 		return 'Upload Page'
