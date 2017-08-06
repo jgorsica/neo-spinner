@@ -202,9 +202,8 @@ def update_loop(strand, image_filename, image_array, angle_list, theta_received,
     #pixels = get_pixel_colors(pixel_colors_by_angle, theta_received.value, spin_rate_received.value)
     update_strand(strand, pixel_colors_by_angle, theta_received.value, spin_rate_received.value)
   turn_off_leds([strand])
-    
-  
-if __name__ == '__main__':
+	
+def start(image_filename):
   sensor = ICM_20601(I2C_BUS, SENSOR_ADDRESS)
   '''initialize strands'''
   #evenly spaced even number of LEDs
@@ -219,7 +218,6 @@ if __name__ == '__main__':
   led_strands = [strand1,strand2]
   angle_list = xrange(0,360,1) #used as array index, so not easily changed
   print('getting image array...')
-  image_filename = sys.argv[1]
   image_array = getImageArray(image_filename, LED_COUNT_1, LED_COUNT_1)
   #create variables in shared memory to pass new theta and spin rate values to processes running update loops
   theta_to_pass = Value('i', 0)
@@ -244,3 +242,7 @@ if __name__ == '__main__':
     time.sleep(0.001)
   for process in processes:
       process.join()
+    
+  
+if __name__ == '__main__':
+  start(sys.argv[1])
