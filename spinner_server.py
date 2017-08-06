@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import request
 import time
-import neorotate
+from neorotate import start
 
 app = Flask(__name__)
 
