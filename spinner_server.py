@@ -20,7 +20,7 @@ def upload_file():
 	else:
 		return 'Upload Page'
 
-def show_it():
+def show_it(filename):
 	exec(open("./neorotate.py").read(),filename)
 
 if __name__ == '__main__':
