@@ -13,7 +13,7 @@ def hello_world():
 def upload_file():
 	if request.method == 'POST':
 		f = request.files['files']
-    filename='pic.png'
+    		filename='pic.png'
 		f.save(filename)
 		show_it(filename)
 		return '200'
